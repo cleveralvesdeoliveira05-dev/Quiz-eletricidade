@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Caminho da Eletricidade</title>
+<style>
+  :root{
+    --azul-escuro: #0B3D63;
+    --azul-escuro-2: #133F6B;
+    --azul-claro: #4FB6E8;
+    --azul-claro-2: #DDF3FC;
+    --verde: #34A853;
+    --verde-claro: #E7F8EC;
+    --amarelo: #FFC93C;
+    --amarelo-escuro: #E8A800;
+    --branco: #FFFFFF;
+    --cinza-texto: #365064;
+    --sombra: 0 10px 30px rgba(11, 61, 99, 0.12);
+    --sombra-forte: 0 16px 40px rgba(11, 61, 99, 0.22);
+    --radius: 22px;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(79,182,232,0.18), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(255,201,60,0.15), transparent 45%),
+      linear-gradient(180deg, #F4FBFF 0%, #EAF6FC 100%);
+    color: var(--cinza-texto);
+    overflow-x:hidden;
+  }
+
+  #app{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+
+  .screen{
+    width:100%;
+    max-width: 640px;
+    display:none;
+    animation: fadeIn 0.6s ease;
+  }
+  .screen.active{ display:block; }
+
+  @keyframes fadeIn{
+    from{ opacity:0; transform: translateY(18px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeInFast{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes popIn{
+    0%{ transform: scale(0.85); opacity:0; }
+    60%{ transform: scale(1.03); opacity:1; }
+    100%{ transform: scale(1); }
+  }
+  @keyframes bounce{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-10px); }
+  }
+  @keyframes spinSlow{
+    from{ transform: rotate(0deg); }
+    to{ transform: rotate(360deg); }
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(255,201,60,0.55); }
+    50%{ box-shadow: 0 0 0 14px rgba(255,201,60,0); }
+  }
+  @keyframes shake{
+    10%,90%{ transform: translateX(-1px); }
+    20%,80%{ transform: translateX(2px); }
+    30%,50%,70%{ transform: translateX(-4px); }
+    40%,60%{ transform: translateX(4px); }
+  }
+  @keyframes confettiFall{
+    from{ transform: translateY(-40px) rotate(0deg); opacity:1; }
+    to{ transform: translateY(340px) rotate(360deg); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ---------- CARD BASE ---------- */
+  .card{
+    background: var(--branco);
+    border-radius: var(--radius);
+    box-shadow: var(--sombra);
+    padding: 36px 30px;
+  }
+
+  /* ---------- TELA INICIAL ---------- */
+  .home-card{
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    padding: 46px 30px 38px;
+  }
+  .home-card::before{
+    content:"";
+    position:absolute;
+    top:-60px; right:-60px;
+    width:180px; height:180px;
+    background: radial-gradient(circle, rgba(255,201,60,0.35), transparent 70%);
+    border-radius:50%;
+  }
+  .home-card::after{
+    content:"";
+    position:absolute;
+    bottom:-70px; left:-70px;
+    width:200px; height:200px;
+    background: radial-gradient(circle, rgba(79,182,232,0.3), transparent 70%);
+    border-radius:50%;
+  }
+  .bolt-icon{
+    font-size: 54px;
+    display:inline-block;
+    animation: bounce 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 6px 10px rgba(255,201,60,0.5));
+  }
+  .home-title{
+    font-size: clamp(24px, 5vw, 32px);
+    color: var(--azul-escuro);
+    margin: 10px 0 6px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+  .home-subtitle{
+    font-size: clamp(15px, 3vw, 18px);
+    color: var(--azul-claro);
+    font-weight: 600;
+    margin-bottom: 22px;
+  }
+  .failed-badge{
+    font-size: clamp(12px, 2.6vw, 14px);
+    background: #FDEAEA;
+    color: #B3311C;
+    border: 1.5px solid #F3C4C0;
+    display:inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight:700;
+    margin-bottom: 22px;
+  }
+  .lollipop-line{
+    font-size: clamp(15px,3vw,17px);
+    background: var(--amarelo);
+    color: #6b4a00;
+    display:inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight:700;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 16px rgba(255,201,60,0.4);
+  }
+
+  .btn{
+    border:none;
+    cursor:pointer;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 16px;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+  }
+  .btn:active{ transform: scale(0.96); }
+
+  .btn-primary{
+    background: linear-gradient(135deg, var(--azul-claro), #2E9FD6);
+    color: var(--branco);
+    font-size: clamp(17px,3.4vw,20px);
+    padding: 16px 46px;
+    box-shadow: 0 10px 24px rgba(46,159,214,0.45);
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 14px 28px rgba(46,159,214,0.55); }
+
+  .btn-secondary{
+    background: var(--branco);
+    color: var(--azul-escuro);
+    border: 2px solid var(--azul-claro-2);
+    font-size: clamp(14px,3vw,16px);
+    padding: 12px 26px;
+    margin-top: 18px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .btn-secondary:hover{ background: var(--azul-claro-2); transform: translateY(-2px); }
+
+  /* ---------- MODAL REGRAS ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background: rgba(11,61,99,0.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 20px;
+    z-index: 50;
+    animation: fadeInFast 0.25s ease;
+  }
+  .modal-overlay.active{ display:flex; }
+  .modal-box{
+    background: var(--branco);
+    border-radius: var(--radius);
+    padding: 30px 26px;
+    max-width: 420px;
+    width:100%;
+    box-shadow: var(--sombra-forte);
+    animation: popIn 0.35s ease;
+  }
+  .modal-title{
+    color: var(--azul-escuro);
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 18px;
+    text-align:center;
+  }
+  .rule-item{
+    display:flex;
+    gap: 12px;
+    align-items:flex-start;
+    background: var(--azul-claro-2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height:1.4;
+  }
+  .rule-item.lollipop{ background: #FFF3D6; }
+  .rule-emoji{ font-size: 22px; flex-shrink:0; }
+  .modal-close{
+    display:block;
+    margin: 16px auto 0;
+    background: var(--azul-escuro);
+    color: var(--branco);
+    padding: 12px 30px;
+    font-size:15px;
+    border-radius: 14px;
+  }
+  .modal-close:hover{ background: var(--azul-escuro-2); }
+
+  /* ---------- QUIZ ---------- */
+  .quiz-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: var(--azul-escuro);
+    font-size: 15px;
+  }
+  .score-pill{
+    background: var(--verde-claro);
+    color: var(--verde);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .progress-track{
+    width:100%;
+    height: 12px;
+    background: var(--azul-claro-2);
+    border-radius: 999px;
+    overflow:hidden;
+    margin-bottom: 22px;
+  }
+  .progress-fill{
+    height:100%;
+    width:10%;
+    background: linear-gradient(90deg, var(--azul-claro), var(--verde));
+    border-radius:999px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .path-strip{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: var(--azul-claro-2);
+    border-radius: 14px;
+    padding: 10px 8px;
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+  .path-strip .arrow{
+    color: var(--azul-claro);
+    font-size: 16px;
+  }
+  .path-strip .step-active{
+    background: var(--branco);
+    border-radius: 10px;
+    padding: 4px 8px;
+    box-shadow: 0 4px 10px rgba(11,61,99,0.15);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  .question-card{
+    animation: fadeInFast 0.45s ease;
+  }
+  .question-text{
+    color: var(--azul-escuro);
+    font-size: clamp(18px,3.6vw,21px);
+    font-weight: 800;
+    margin: 4px 0 20px;
+    line-height:1.4;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .option{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    background: #F7FBFD;
+    border: 2px solid #E3F1F8;
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor:pointer;
+    font-size: clamp(14px,3vw,16px);
+    font-weight: 600;
+    color: var(--cinza-texto);
+    transition: all 0.22s ease;
+  }
+  .option:hover{
+    border-color: var(--azul-claro);
+    transform: translateX(4px);
+    background: var(--azul-claro-2);
+  }
+  .option .dot{
+    width: 22px; height:22px;
+    border-radius:50%;
+    border: 2.5px solid #B9DCEC;
+    flex-shrink:0;
+    transition: all 0.22s ease;
+    position:relative;
+  }
+  .option.selected{
+    border-color: var(--verde);
+    background: var(--verde-claro);
+    transform: scale(1.015);
+    box-shadow: 0 6px 16px rgba(52,168,83,0.2);
+  }
+  .option.selected .dot{
+    border-color: var(--verde);
+    background: var(--verde);
+  }
+  .option.selected .dot::after{
+    content:"✓";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--branco);
+    font-size: 13px;
+    font-weight:900;
+  }
+
+  .btn-next{
+    width:100%;
+    background: linear-gradient(135deg, #BFE3F2, #A9D9EE);
+    color: #7CA7BB;
+    font-size: 17px;
+    padding: 15px;
+    cursor:not-allowed;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .btn-next.enabled{
+    background: linear-gradient(135deg, var(--verde), #2C9148);
+    color: var(--branco);
+    cursor:pointer;
+    box-shadow: 0 10px 22px rgba(52,168,83,0.4);
+  }
+  .btn-next.enabled:hover{ transform: translateY(-3px); }
+
+  /* ---------- RESULTADO ---------- */
+  .result-card{
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    padding: 42px 28px;
+  }
+  .result-emoji{
+    font-size: 56px;
+    animation: popIn 0.6s ease;
+  }
+  .result-emoji.win{ animation: popIn 0.6s ease, bounce 2s ease-in-out 0.6s infinite; }
+  .result-title{
+    color: var(--azul-escuro);
+    font-size: 26px;
+    font-weight: 900;
+    margin: 12px 0 6px;
+  }
+  .result-score{
+    font-size: 18px;
+    color: var(--cinza-texto);
+    margin-bottom: 4px;
+  }
+  .result-percent{
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--azul-claro);
+    margin: 6px 0 18px;
+    animation: popIn 0.7s ease;
+  }
+  .result-message{
+    font-size: 16px;
+    line-height:1.5;
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    border-radius: 14px;
+  }
+  .result-message.win{ background: #FFF3D6; color: #7A5900; }
+  .result-message.lose{ background: var(--azul-claro-2); color: var(--azul-escuro); }
+
+  .confetti{
+    position:absolute;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .confetti span{
+    position:absolute;
+    top:-20px;
+    font-size: 20px;
+    animation: confettiFall 2.2s ease-in forwards;
+  }
+
+  footer.credit{
+    text-align:center;
+    font-size:12px;
+    color:#8FADC0;
+    margin-top: 18px;
+  }
+
+  @media (max-width:480px){
+    .card{ padding: 26px 18px; }
+    .path-strip{ font-size:17px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TELA INICIAL -->
+  <section class="screen active" id="screen-home">
+    <div class="card home-card">
+      <span class="bolt-icon">⚡</span>
+      <h1 class="home-title">O CAMINHO DA ELETRICIDADE</h1>
+      <p class="home-subtitle">Da usina até a nossa casa!</p>
+      <div class="lollipop-line">🍭 Responda e ganhe um pirulito!</div>
+      <div class="failed-badge" id="failed-badge" style="display:none;">🚫 Você já errou uma vez. Isso ficará marcado para sempre.</div>
+      <br>
+      <button class="btn btn-primary" id="btn-play">▶️ JOGAR</button>
+      <br>
+      <button class="btn btn-secondary" id="btn-rules">📋 REGRAS</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-top">
+      <span id="question-counter">Pergunta 1 de 10</span>
+      <span class="score-pill">⭐ <span id="score-count">0</span> pontos</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="path-strip" id="path-strip"></div>
+
+    <div class="card question-card" id="question-card">
+      <p class="question-text" id="question-text"></p>
+      <div class="options" id="options-container"></div>
+      <button class="btn btn-next" id="btn-next">➡️ PRÓXIMA</button>
+    </div>
+  </section>
+
+  <!-- RESULTADO -->
+  <section class="screen" id="screen-result">
+    <div class="card result-card" id="result-card">
+      <div class="confetti" id="confetti"></div>
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <h2 class="result-title">QUIZ CONCLUÍDO!</h2>
+      <p class="result-score">Você acertou <strong id="result-hits">0</strong> de 10 perguntas.</p>
+      <div class="result-percent"><span id="result-percent">0</span>%</div>
+      <div class="result-message" id="result-message"></div>
+      <button class="btn btn-primary" id="btn-restart">🔄 JOGAR NOVAMENTE</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODAL REGRAS -->
+<div class="modal-overlay" id="modal-rules">
+  <div class="modal-box">
+    <h3 class="modal-title">📋 Regras</h3>
+    <div class="rule-item">
+      <span class="rule-emoji">🚫</span>
+      <span>Não trapaceie! Responda com o que você aprendeu no trabalho.</span>
+    </div>
+    <div class="rule-item">
+      <span class="rule-emoji">😄</span>
+      <span>Se divirta! O quiz é para testar e reforçar seu aprendizado.</span>
+    </div>
+    <div class="rule-item lollipop">
+      <span class="rule-emoji">🍭</span>
+      <span>Responda às 10 perguntas e acerte pelo menos 8 para ganhar o pirulito.</span>
+    </div>
+    <button class="btn modal-close" id="btn-close-rules">Entendi!</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- DADOS DO QUIZ ----------
+  const questions = [
+    {
+      text: "De onde vem a eletricidade que usamos em casa?",
+      options: [
+        "Ela é produzida nas usinas, transformando a força da natureza ou combustíveis em energia elétrica",
+        "Ela nasce pronta dentro dos fios da rua",
+        "Ela é criada dentro de cada tomada da casa",
+        "Ela vem apenas das pilhas e baterias"
+      ],
+      correct: 0
+    },
+    {
+      text: "Quais são os três tipos de usinas apresentados no trabalho?",
+      options: [
+        "Eólica, nuclear e maremotriz",
+        "Hidrelétrica, solar e termoelétrica",
+        "Geotérmica, solar e eólica",
+        "Nuclear, hidrelétrica e eólica"
+      ],
+      correct: 1
+    },
+    {
+      text: "Qual usina utiliza a força da água para produzir eletricidade?",
+      options: ["Usina solar", "Usina termoelétrica", "Usina hidrelétrica", "Usina eólica"],
+      correct: 2
+    },
+    {
+      text: "Qual usina utiliza a energia do Sol para produzir eletricidade?",
+      options: ["Usina hidrelétrica", "Usina solar", "Usina termoelétrica", "Usina eólica"],
+      correct: 1
+    },
+    {
+      text: "Qual usina utiliza combustíveis e calor para produzir energia elétrica?",
+      options: ["Usina termoelétrica", "Usina hidrelétrica", "Usina solar", "Usina eólica"],
+      correct: 0
+    },
+    {
+      text: "Qual é a função das torres de transmissão no caminho da eletricidade?",
+      options: [
+        "Guardar a eletricidade para o futuro",
+        "Transportar a energia elétrica por longas distâncias, das usinas até as cidades",
+        "Transformar a eletricidade em água",
+        "Produzir eletricidade a partir do vento"
+      ],
+      correct: 1
+    },
+    {
+      text: "No fluxograma do trabalho, o que vem logo depois das torres de transmissão?",
+      options: ["Consumidores finais", "Distribuição", "Subestação", "Usina"],
+      correct: 2
+    },
+    {
+      text: "O que vem depois da subestação, no caminho da eletricidade?",
+      options: ["Torres de transmissão", "Usina", "Distribuição", "Consumidores finais"],
+      correct: 2
+    },
+    {
+      text: "Quem recebe a eletricidade no final do caminho, depois da distribuição?",
+      options: [
+        "Somente as usinas",
+        "As torres de transmissão",
+        "Residências, comércios e serviços",
+        "Somente as subestações"
+      ],
+      correct: 2
+    },
+    {
+      text: "Qual é a ordem correta do caminho completo da eletricidade?",
+      options: [
+        "Usina → Distribuição → Torres de transmissão → Subestação → Consumidores",
+        "Usina → Torres de transmissão → Subestação → Distribuição → Consumidores finais",
+        "Subestação → Usina → Torres de transmissão → Distribuição → Consumidores",
+        "Usina → Subestação → Torres de transmissão → Consumidores → Distribuição"
+      ],
+      correct: 1
+    }
+  ];
+
+  // Etapas do caminho para o mini-mapa visual
+  const pathSteps = [
+    { icon: "⚡", label: "Usina" },
+    { icon: "🗼", label: "Torres" },
+    { icon: "🏭", label: "Subestação" },
+    { icon: "🔌", label: "Distribuição" },
+    { icon: "🏠🏫🏥🏪", label: "Consumidores" }
+  ];
+  // Mapeia cada pergunta a uma etapa em destaque (aproximado, apenas ilustrativo)
+  const questionToStep = [0,0,0,0,0,1,2,3,4,4];
+
+  // ---------- ESTADO ----------
+  let currentQuestion = 0;
+  let score = 0;
+  let selectedOption = null;
+  let answers = new Array(questions.length).fill(null);
+
+  // ---------- ELEMENTOS ----------
+  const screenHome = document.getElementById('screen-home');
+  const screenQuiz = document.getElementById('screen-quiz');
+  const screenResult = document.getElementById('screen-result');
+
+  const btnPlay = document.getElementById('btn-play');
+  const btnRules = document.getElementById('btn-rules');
+  const btnCloseRules = document.getElementById('btn-close-rules');
+  const modalRules = document.getElementById('modal-rules');
+
+  const questionCounter = document.getElementById('question-counter');
+  const scoreCount = document.getElementById('score-count');
+  const progressFill = document.getElementById('progress-fill');
+  const pathStrip = document.getElementById('path-strip');
+  const questionCard = document.getElementById('question-card');
+  const questionText = document.getElementById('question-text');
+  const optionsContainer = document.getElementById('options-container');
+  const btnNext = document.getElementById('btn-next');
+
+  const resultHits = document.getElementById('result-hits');
+  const resultPercent = document.getElementById('result-percent');
+  const resultEmoji = document.getElementById('result-emoji');
+  const resultMessage = document.getElementById('result-message');
+  const resultCard = document.getElementById('result-card');
+  const confettiBox = document.getElementById('confetti');
+  const btnRestart = document.getElementById('btn-restart');
+
+  function showScreen(screen){
+    [screenHome, screenQuiz, screenResult].forEach(s => s.classList.remove('active'));
+    screen.classList.add('active');
+  }
+
+  // ---------- REGRAS (MODAL) ----------
+  btnRules.addEventListener('click', () => modalRules.classList.add('active'));
+  btnCloseRules.addEventListener('click', () => modalRules.classList.remove('active'));
+  modalRules.addEventListener('click', (e) => {
+    if(e.target === modalRules) modalRules.classList.remove('active');
+  });
+
+  // ---------- JOGAR ----------
+  btnPlay.addEventListener('click', () => {
+    resetQuiz();
+    showScreen(screenQuiz);
+    renderQuestion();
+  });
+
+  function resetQuiz(){
+    currentQuestion = 0;
+    score = 0;
+    selectedOption = null;
+    answers = new Array(questions.length).fill(null);
+    scoreCount.textContent = "0";
+  }
+
+  // ---------- RENDER PATH STRIP ----------
+  function renderPathStrip(activeIndex){
+    pathStrip.innerHTML = "";
+    pathSteps.forEach((step, i) => {
+      const el = document.createElement('span');
+      el.className = i === activeIndex ? 'step-active' : '';
+      el.textContent = step.icon;
+      el.title = step.label;
+      pathStrip.appendChild(el);
+      if(i < pathSteps.length - 1){
+        const arrow = document.createElement('span');
+        arrow.className = 'arrow';
+        arrow.textContent = '→';
+        pathStrip.appendChild(arrow);
+      }
+    });
+  }
+
+  // ---------- RENDER PERGUNTA ----------
+  function renderQuestion(){
+    const q = questions[currentQuestion];
+    selectedOption = answers[currentQuestion];
+
+    questionCounter.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+    scoreCount.textContent = String(score);
+
+    const progressPercent = ((currentQuestion) / questions.length) * 100 + (100/questions.length)*0.15;
+    progressFill.style.width = Math.min(progressPercent, 100) + "%";
+
+    renderPathStrip(questionToStep[currentQuestion]);
+
+    // animação de troca
+    questionCard.style.animation = 'none';
+    void questionCard.offsetWidth;
+    questionCard.style.animation = 'fadeInFast 0.45s ease';
+
+    questionText.textContent = q.text;
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option' + (selectedOption === idx ? ' selected' : '');
+      div.innerHTML = `<span class="dot"></span><span>${opt}</span>`;
+      div.addEventListener('click', () => selectOption(idx));
+      optionsContainer.appendChild(div);
+    });
+
+    updateNextButton();
+  }
+
+  function selectOption(idx){
+    selectedOption = idx;
+    answers[currentQuestion] = idx;
+    document.querySelectorAll('.option').forEach((el, i) => {
+      el.classList.toggle('selected', i === idx);
+    });
+    updateNextButton();
+  }
+
+  function updateNextButton(){
+    if(selectedOption !== null){
+      btnNext.classList.add('enabled');
+    } else {
+      btnNext.classList.remove('enabled');
+    }
+  }
+
+  btnNext.addEventListener('click', () => {
+    if(selectedOption === null) return;
+
+    // recalcula pontuação a cada avanço (permite trocar resposta antes de avançar)
+    recalcScore();
+
+    if(currentQuestion < questions.length - 1){
+      currentQuestion++;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  });
+
+  function recalcScore(){
+    score = 0;
+    answers.forEach((ans, i) => {
+      if(ans !== null && ans === questions[i].correct) score++;
+    });
+    scoreCount.textContent = String(score);
+  }
+
+  // ---------- MARCA PERMANENTE DE FALHA ----------
+  const FAILED_KEY = 'caminho-eletricidade-falhou-para-sempre';
+
+  function jaFalhouPermanentemente(){
+    try{
+      return localStorage.getItem(FAILED_KEY) === 'true';
+    }catch(e){
+      return false;
+    }
+  }
+
+  function marcarFalhaPermanente(){
+    try{
+      localStorage.setItem(FAILED_KEY, 'true');
+    }catch(e){ /* localStorage indisponível: segue sem marcar */ }
+  }
+
+  function atualizarBadgeInicial(){
+    const badge = document.getElementById('failed-badge');
+    if(!badge) return;
+    badge.style.display = jaFalhouPermanentemente() ? 'inline-block' : 'none';
+  }
+
+  // ---------- RESULTADO ----------
+  function finishQuiz(){
+    recalcScore();
+    progressFill.style.width = "100%";
+
+    const total = questions.length;
+    const percent = Math.round((score/total)*100);
+    const acertouAgora = score >= 8;
+    const marcadoParaSempre = jaFalhouPermanentemente();
+
+    resultHits.textContent = String(score);
+    resultPercent.textContent = String(percent);
+
+    // Se já falhou uma vez, fica marcado para sempre: nunca mais mostra a tela de vitória.
+    const won = acertouAgora && !marcadoParaSempre;
+
+    if(won){
+      resultEmoji.textContent = "🍭";
+      resultEmoji.classList.add('win');
+      resultCard.querySelector('.result-title').textContent = "PARABÉNS!";
+      resultMessage.className = "result-message win";
+      resultMessage.textContent = "Fale com o Pedro, dono do trabalho, para buscar o seu pirulito! 🍭";
+      launchConfetti();
+    } else {
+      resultEmoji.textContent = "📚";
+      resultEmoji.classList.remove('win');
+      resultCard.querySelector('.result-title').textContent = "QUASE!";
+      resultMessage.className = "result-message lose";
+      if(marcadoParaSempre){
+        resultMessage.textContent = "Não foi dessa vez! Estude mais um pouco e tente novamente. (Você já errou uma vez antes, e isso ficará marcado para sempre.)";
+      } else {
+        resultMessage.textContent = "Não foi dessa vez! Estude mais um pouco e tente novamente.";
+        marcarFalhaPermanente();
+      }
+    }
+
+    atualizarBadgeInicial();
+    showScreen(screenResult);
+  }
+
+  function launchConfetti(){
+    confettiBox.innerHTML = "";
+    const emojis = ["🍭","⚡","🎉","✨","🍬"];
+    for(let i=0; i<24; i++){
+      const span = document.createElement('span');
+      span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      span.style.left = Math.random()*100 + "%";
+      span.style.animationDelay = (Math.random()*0.6) + "s";
+      span.style.fontSize = (14 + Math.random()*14) + "px";
+      confettiBox.appendChild(span);
+    }
+  }
+
+  // ---------- REINICIAR ----------
+  btnRestart.addEventListener('click', () => {
+    resetQuiz();
+    showScreen(screenQuiz);
+    renderQuestion();
+  });
+
+  // Mostra o selo de marca permanente já ao abrir a página, se aplicável
+  atualizarBadgeInicial();
+
+})();
+</script>
+</body>
+</html>
