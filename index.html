@@ -146,17 +146,6 @@
     font-weight: 600;
     margin-bottom: 22px;
   }
-  .failed-badge{
-    font-size: clamp(12px, 2.6vw, 14px);
-    background: #FDEAEA;
-    color: #B3311C;
-    border: 1.5px solid #F3C4C0;
-    display:inline-block;
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-weight:700;
-    margin-bottom: 22px;
-  }
   .lollipop-line{
     font-size: clamp(15px,3vw,17px);
     background: var(--amarelo);
@@ -255,6 +244,39 @@
     border-radius: 14px;
   }
   .modal-close:hover{ background: var(--azul-escuro-2); }
+
+  .name-modal-subtitle{
+    text-align:center;
+    font-size: 15px;
+    color: var(--cinza-texto);
+    margin: 0 0 16px;
+  }
+  .name-input{
+    width:100%;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 2px solid var(--azul-claro-2);
+    outline:none;
+    color: var(--azul-escuro);
+    font-weight:600;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .name-input:focus{
+    border-color: var(--azul-claro);
+    box-shadow: 0 0 0 4px rgba(79,182,232,0.18);
+  }
+  .name-input.invalid{
+    border-color: #E0564A;
+    animation: shake 0.5s ease;
+  }
+  .name-error{
+    color: #C7392E;
+    font-size: 13px;
+    font-weight:700;
+    margin: 8px 2px 0;
+  }
 
   /* ---------- QUIZ ---------- */
   .quiz-top{
@@ -380,6 +402,86 @@
     font-weight:900;
   }
 
+  .option.correct{
+    border-color: var(--verde);
+    background: var(--verde-claro);
+    box-shadow: 0 6px 16px rgba(52,168,83,0.2);
+  }
+  .option.correct .dot{
+    border-color: var(--verde);
+    background: var(--verde);
+  }
+  .option.correct .dot::after{
+    content:"✓";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--branco);
+    font-size: 13px;
+    font-weight:900;
+  }
+  .option.incorrect{
+    border-color: #E0564A;
+    background: #FDEAEA;
+    animation: shake 0.5s ease;
+  }
+  .option.incorrect .dot{
+    border-color: #E0564A;
+    background: #E0564A;
+  }
+  .option.incorrect .dot::after{
+    content:"✕";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color: var(--branco);
+    font-size: 12px;
+    font-weight:900;
+  }
+  .options.answered .option{
+    cursor: default;
+  }
+  .options.answered .option:hover{
+    transform:none;
+    background: inherit;
+    border-color: inherit;
+  }
+  .options.answered .option.correct:hover{ background: var(--verde-claro); }
+  .options.answered .option.incorrect:hover{ background: #FDEAEA; }
+
+  .feedback-box{
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    animation: popIn 0.4s ease;
+  }
+  .feedback-box.correct{
+    background: var(--verde-claro);
+    border: 2px solid var(--verde);
+  }
+  .feedback-box.incorrect{
+    background: #FDEAEA;
+    border: 2px solid #E0564A;
+    animation: popIn 0.4s ease, shake 0.5s ease;
+  }
+  .feedback-title{
+    font-size: 17px;
+    font-weight: 900;
+    margin: 0 0 6px;
+  }
+  .feedback-box.correct .feedback-title{ color: var(--verde); }
+  .feedback-box.incorrect .feedback-title{ color: #C7392E; }
+  .feedback-explanation{
+    font-size: 14px;
+    margin:0;
+    color: var(--cinza-texto);
+    line-height:1.4;
+  }
+
   .btn-next{
     width:100%;
     background: linear-gradient(135deg, #BFE3F2, #A9D9EE);
@@ -439,6 +541,16 @@
   }
   .result-message.win{ background: #FFF3D6; color: #7A5900; }
   .result-message.lose{ background: var(--azul-claro-2); color: var(--azul-escuro); }
+  .result-estande{
+    font-size: 15px;
+    font-weight: 700;
+    color: #7A5900;
+    background: #FFF3D6;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin: -8px 0 24px;
+    animation: popIn 0.5s ease;
+  }
 
   .confetti{
     position:absolute;
@@ -477,7 +589,6 @@
       <h1 class="home-title">O CAMINHO DA ELETRICIDADE</h1>
       <p class="home-subtitle">Da usina até a nossa casa!</p>
       <div class="lollipop-line">🍭 Responda e ganhe um pirulito!</div>
-      <div class="failed-badge" id="failed-badge" style="display:none;">🚫 Você já errou uma vez. Isso ficará marcado para sempre.</div>
       <br>
       <button class="btn btn-primary" id="btn-play">▶️ JOGAR</button>
       <br>
@@ -488,7 +599,7 @@
   <!-- QUIZ -->
   <section class="screen" id="screen-quiz">
     <div class="quiz-top">
-      <span id="question-counter">Pergunta 1 de 10</span>
+      <span id="question-counter">Pergunta 1 de 5</span>
       <span class="score-pill">⭐ <span id="score-count">0</span> pontos</span>
     </div>
     <div class="progress-track">
@@ -500,6 +611,10 @@
     <div class="card question-card" id="question-card">
       <p class="question-text" id="question-text"></p>
       <div class="options" id="options-container"></div>
+      <div class="feedback-box" id="feedback-box" style="display:none;">
+        <p class="feedback-title" id="feedback-title"></p>
+        <p class="feedback-explanation" id="feedback-explanation"></p>
+      </div>
       <button class="btn btn-next" id="btn-next">➡️ PRÓXIMA</button>
     </div>
   </section>
@@ -510,9 +625,10 @@
       <div class="confetti" id="confetti"></div>
       <div class="result-emoji" id="result-emoji">🎉</div>
       <h2 class="result-title">QUIZ CONCLUÍDO!</h2>
-      <p class="result-score">Você acertou <strong id="result-hits">0</strong> de 10 perguntas.</p>
+      <p class="result-score">Você acertou <strong id="result-hits">0</strong> de 5 perguntas.</p>
       <div class="result-percent"><span id="result-percent">0</span>%</div>
       <div class="result-message" id="result-message"></div>
+      <p class="result-estande" id="result-estande" style="display:none;">🍭 Vá ao estande e mostre para o dono (Pedro).</p>
       <button class="btn btn-primary" id="btn-restart">🔄 JOGAR NOVAMENTE</button>
     </div>
   </section>
@@ -533,9 +649,20 @@
     </div>
     <div class="rule-item lollipop">
       <span class="rule-emoji">🍭</span>
-      <span>Responda às 10 perguntas e acerte pelo menos 8 para ganhar o pirulito.</span>
+      <span>Responda às 5 perguntas e acerte pelo menos 3 para ganhar o pirulito.</span>
     </div>
     <button class="btn modal-close" id="btn-close-rules">Entendi!</button>
+  </div>
+</div>
+
+<!-- MODAL NOME DO PARTICIPANTE -->
+<div class="modal-overlay" id="modal-name">
+  <div class="modal-box">
+    <h3 class="modal-title">✏️ Antes de começar</h3>
+    <p class="name-modal-subtitle">Qual é o seu nome?</p>
+    <input type="text" id="input-name" class="name-input" placeholder="Digite seu nome" maxlength="40" autocomplete="off">
+    <p class="name-error" id="name-error" style="display:none;">Por favor, digite seu nome para continuar.</p>
+    <button class="btn modal-close" id="btn-start-quiz">▶️ Começar</button>
   </div>
 </div>
 
@@ -546,79 +673,59 @@
   // ---------- DADOS DO QUIZ ----------
   const questions = [
     {
-      text: "De onde vem a eletricidade que usamos em casa?",
+      text: "Onde a eletricidade é produzida?",
       options: [
-        "Ela é produzida nas usinas, transformando a força da natureza ou combustíveis em energia elétrica",
-        "Ela nasce pronta dentro dos fios da rua",
-        "Ela é criada dentro de cada tomada da casa",
-        "Ela vem apenas das pilhas e baterias"
+        "Nas casas",
+        "Nas usinas",
+        "Nas escolas",
+        "Nos postes"
       ],
-      correct: 0
-    },
-    {
-      text: "Quais são os três tipos de usinas apresentados no trabalho?",
-      options: [
-        "Eólica, nuclear e maremotriz",
-        "Hidrelétrica, solar e termoelétrica",
-        "Geotérmica, solar e eólica",
-        "Nuclear, hidrelétrica e eólica"
-      ],
-      correct: 1
+      correct: 1,
+      explanation: "A eletricidade é gerada nas usinas antes de percorrer todo o caminho até as nossas casas."
     },
     {
       text: "Qual usina utiliza a força da água para produzir eletricidade?",
-      options: ["Usina solar", "Usina termoelétrica", "Usina hidrelétrica", "Usina eólica"],
-      correct: 2
-    },
-    {
-      text: "Qual usina utiliza a energia do Sol para produzir eletricidade?",
-      options: ["Usina hidrelétrica", "Usina solar", "Usina termoelétrica", "Usina eólica"],
-      correct: 1
-    },
-    {
-      text: "Qual usina utiliza combustíveis e calor para produzir energia elétrica?",
-      options: ["Usina termoelétrica", "Usina hidrelétrica", "Usina solar", "Usina eólica"],
-      correct: 0
-    },
-    {
-      text: "Qual é a função das torres de transmissão no caminho da eletricidade?",
       options: [
-        "Guardar a eletricidade para o futuro",
-        "Transportar a energia elétrica por longas distâncias, das usinas até as cidades",
-        "Transformar a eletricidade em água",
-        "Produzir eletricidade a partir do vento"
+        "Eólica",
+        "Solar",
+        "Hidrelétrica",
+        "Termelétrica"
       ],
-      correct: 1
+      correct: 2,
+      explanation: "A usina hidrelétrica usa a força da água em movimento para gerar eletricidade."
     },
     {
-      text: "No fluxograma do trabalho, o que vem logo depois das torres de transmissão?",
-      options: ["Consumidores finais", "Distribuição", "Subestação", "Usina"],
-      correct: 2
-    },
-    {
-      text: "O que vem depois da subestação, no caminho da eletricidade?",
-      options: ["Torres de transmissão", "Usina", "Distribuição", "Consumidores finais"],
-      correct: 2
-    },
-    {
-      text: "Quem recebe a eletricidade no final do caminho, depois da distribuição?",
+      text: "Qual fonte de energia utiliza a força dos ventos?",
       options: [
-        "Somente as usinas",
-        "As torres de transmissão",
-        "Residências, comércios e serviços",
-        "Somente as subestações"
+        "Energia eólica",
+        "Energia hidráulica",
+        "Energia nuclear",
+        "Energia térmica"
       ],
-      correct: 2
+      correct: 0,
+      explanation: "A energia eólica é produzida a partir da força dos ventos, que movem as turbinas."
     },
     {
-      text: "Qual é a ordem correta do caminho completo da eletricidade?",
+      text: "O que acontece com a eletricidade depois de ser produzida na usina?",
       options: [
-        "Usina → Distribuição → Torres de transmissão → Subestação → Consumidores",
-        "Usina → Torres de transmissão → Subestação → Distribuição → Consumidores finais",
-        "Subestação → Usina → Torres de transmissão → Distribuição → Consumidores",
-        "Usina → Subestação → Torres de transmissão → Consumidores → Distribuição"
+        "Ela é armazenada em todas as casas",
+        "Ela é transportada por redes de transmissão e distribuição",
+        "Ela vai diretamente para os aparelhos",
+        "Ela desaparece no caminho"
       ],
-      correct: 1
+      correct: 1,
+      explanation: "Depois de gerada, a eletricidade viaja por redes de transmissão e distribuição até chegar aos consumidores."
+    },
+    {
+      text: "Qual é o caminho simplificado da eletricidade desde a usina até chegar à nossa casa?",
+      options: [
+        "Casa → subestação → usina → transmissão → distribuição",
+        "Usina → transmissão → subestação → distribuição → casa",
+        "Usina → casa → subestação → transmissão → distribuição",
+        "Subestação → casa → usina → transmissão → distribuição"
+      ],
+      correct: 1,
+      explanation: "O caminho correto é: usina → transmissão → subestação → distribuição → casa."
     }
   ];
 
@@ -631,13 +738,14 @@
     { icon: "🏠🏫🏥🏪", label: "Consumidores" }
   ];
   // Mapeia cada pergunta a uma etapa em destaque (aproximado, apenas ilustrativo)
-  const questionToStep = [0,0,0,0,0,1,2,3,4,4];
+  const questionToStep = [0,0,0,1,4];
 
   // ---------- ESTADO ----------
   let currentQuestion = 0;
   let score = 0;
   let selectedOption = null;
   let answers = new Array(questions.length).fill(null);
+  let participantName = "";
 
   // ---------- ELEMENTOS ----------
   const screenHome = document.getElementById('screen-home');
@@ -649,6 +757,11 @@
   const btnCloseRules = document.getElementById('btn-close-rules');
   const modalRules = document.getElementById('modal-rules');
 
+  const modalName = document.getElementById('modal-name');
+  const inputName = document.getElementById('input-name');
+  const nameError = document.getElementById('name-error');
+  const btnStartQuiz = document.getElementById('btn-start-quiz');
+
   const questionCounter = document.getElementById('question-counter');
   const scoreCount = document.getElementById('score-count');
   const progressFill = document.getElementById('progress-fill');
@@ -657,6 +770,10 @@
   const questionText = document.getElementById('question-text');
   const optionsContainer = document.getElementById('options-container');
   const btnNext = document.getElementById('btn-next');
+  const feedbackBox = document.getElementById('feedback-box');
+  const feedbackTitle = document.getElementById('feedback-title');
+  const feedbackExplanation = document.getElementById('feedback-explanation');
+  const resultEstande = document.getElementById('result-estande');
 
   const resultHits = document.getElementById('result-hits');
   const resultPercent = document.getElementById('result-percent');
@@ -680,9 +797,41 @@
 
   // ---------- JOGAR ----------
   btnPlay.addEventListener('click', () => {
+    nameError.style.display = 'none';
+    inputName.classList.remove('invalid');
+    inputName.value = "";
+    modalName.classList.add('active');
+    setTimeout(() => inputName.focus(), 200);
+  });
+
+  modalName.addEventListener('click', (e) => {
+    if(e.target === modalName) modalName.classList.remove('active');
+  });
+
+  function tentarComecarQuiz(){
+    const nome = inputName.value.trim();
+    if(nome === ""){
+      nameError.style.display = 'block';
+      inputName.classList.add('invalid');
+      inputName.focus();
+      return;
+    }
+    participantName = nome;
+    modalName.classList.remove('active');
     resetQuiz();
     showScreen(screenQuiz);
     renderQuestion();
+  }
+
+  btnStartQuiz.addEventListener('click', tentarComecarQuiz);
+  inputName.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') tentarComecarQuiz();
+  });
+  inputName.addEventListener('input', () => {
+    if(inputName.value.trim() !== ""){
+      nameError.style.display = 'none';
+      inputName.classList.remove('invalid');
+    }
   });
 
   function resetQuiz(){
@@ -731,25 +880,66 @@
 
     questionText.textContent = q.text;
     optionsContainer.innerHTML = "";
+    optionsContainer.classList.remove('answered');
+    feedbackBox.style.display = 'none';
+    feedbackBox.className = 'feedback-box';
+
+    const jaRespondida = selectedOption !== null;
 
     q.options.forEach((opt, idx) => {
       const div = document.createElement('div');
-      div.className = 'option' + (selectedOption === idx ? ' selected' : '');
+      let classes = 'option';
+      if(jaRespondida){
+        if(idx === q.correct) classes += ' correct';
+        else if(idx === selectedOption) classes += ' incorrect';
+      }
+      div.className = classes;
       div.innerHTML = `<span class="dot"></span><span>${opt}</span>`;
       div.addEventListener('click', () => selectOption(idx));
       optionsContainer.appendChild(div);
     });
 
+    if(jaRespondida){
+      optionsContainer.classList.add('answered');
+      mostrarFeedback(selectedOption === q.correct, q);
+    }
+
     updateNextButton();
   }
 
   function selectOption(idx){
+    // Trava a resposta assim que o participante escolhe, para mostrar o aviso imediatamente
+    if(selectedOption !== null) return;
+
     selectedOption = idx;
     answers[currentQuestion] = idx;
+    recalcScore();
+
+    const q = questions[currentQuestion];
     document.querySelectorAll('.option').forEach((el, i) => {
-      el.classList.toggle('selected', i === idx);
+      if(i === q.correct) el.classList.add('correct');
+      if(i === idx && idx !== q.correct) el.classList.add('incorrect');
     });
+    optionsContainer.classList.add('answered');
+
+    mostrarFeedback(idx === q.correct, q);
     updateNextButton();
+  }
+
+  function mostrarFeedback(acertou, q){
+    feedbackBox.style.display = 'block';
+    feedbackBox.className = 'feedback-box ' + (acertou ? 'correct' : 'incorrect');
+    // reinicia a animação
+    feedbackBox.style.animation = 'none';
+    void feedbackBox.offsetWidth;
+    feedbackBox.style.animation = '';
+
+    if(acertou){
+      feedbackTitle.textContent = "✅ ACERTOU!";
+    } else {
+      feedbackTitle.textContent = `❌ ERROU! A resposta correta é: "${q.options[q.correct]}"`;
+    }
+    feedbackExplanation.textContent = q.explanation;
   }
 
   function updateNextButton(){
@@ -762,9 +952,6 @@
 
   btnNext.addEventListener('click', () => {
     if(selectedOption === null) return;
-
-    // recalcula pontuação a cada avanço (permite trocar resposta antes de avançar)
-    recalcScore();
 
     if(currentQuestion < questions.length - 1){
       currentQuestion++;
@@ -782,29 +969,6 @@
     scoreCount.textContent = String(score);
   }
 
-  // ---------- MARCA PERMANENTE DE FALHA ----------
-  const FAILED_KEY = 'caminho-eletricidade-falhou-para-sempre';
-
-  function jaFalhouPermanentemente(){
-    try{
-      return localStorage.getItem(FAILED_KEY) === 'true';
-    }catch(e){
-      return false;
-    }
-  }
-
-  function marcarFalhaPermanente(){
-    try{
-      localStorage.setItem(FAILED_KEY, 'true');
-    }catch(e){ /* localStorage indisponível: segue sem marcar */ }
-  }
-
-  function atualizarBadgeInicial(){
-    const badge = document.getElementById('failed-badge');
-    if(!badge) return;
-    badge.style.display = jaFalhouPermanentemente() ? 'inline-block' : 'none';
-  }
-
   // ---------- RESULTADO ----------
   function finishQuiz(){
     recalcScore();
@@ -812,36 +976,31 @@
 
     const total = questions.length;
     const percent = Math.round((score/total)*100);
-    const acertouAgora = score >= 8;
-    const marcadoParaSempre = jaFalhouPermanentemente();
 
     resultHits.textContent = String(score);
     resultPercent.textContent = String(percent);
 
-    // Se já falhou uma vez, fica marcado para sempre: nunca mais mostra a tela de vitória.
-    const won = acertouAgora && !marcadoParaSempre;
+    // Regra do prêmio: baseada SOMENTE na pontuação (0-5).
+    // 0, 1 ou 2 acertos -> não ganhou. 3, 4 ou 5 acertos -> ganhou.
+    const won = score >= 3;
 
     if(won){
       resultEmoji.textContent = "🍭";
       resultEmoji.classList.add('win');
-      resultCard.querySelector('.result-title').textContent = "PARABÉNS!";
+      resultCard.querySelector('.result-title').textContent = "🎉 PARABÉNS! VOCÊ GANHOU O PIRULITO!";
       resultMessage.className = "result-message win";
-      resultMessage.textContent = "Fale com o Pedro, dono do trabalho, para buscar o seu pirulito! 🍭";
+      resultMessage.textContent = "Você aprendeu muito bem o caminho da eletricidade!";
+      resultEstande.style.display = 'block';
       launchConfetti();
     } else {
       resultEmoji.textContent = "📚";
       resultEmoji.classList.remove('win');
-      resultCard.querySelector('.result-title').textContent = "QUASE!";
+      resultCard.querySelector('.result-title').textContent = "😕 VOCÊ NÃO GANHOU O PIRULITO";
       resultMessage.className = "result-message lose";
-      if(marcadoParaSempre){
-        resultMessage.textContent = "Não foi dessa vez! Estude mais um pouco e tente novamente. (Você já errou uma vez antes, e isso ficará marcado para sempre.)";
-      } else {
-        resultMessage.textContent = "Não foi dessa vez! Estude mais um pouco e tente novamente.";
-        marcarFalhaPermanente();
-      }
+      resultMessage.textContent = "Você não atingiu a pontuação mínima para ganhar o pirulito. Tente novamente!";
+      resultEstande.style.display = 'none';
     }
 
-    atualizarBadgeInicial();
     showScreen(screenResult);
   }
 
@@ -864,9 +1023,6 @@
     showScreen(screenQuiz);
     renderQuestion();
   });
-
-  // Mostra o selo de marca permanente já ao abrir a página, se aplicável
-  atualizarBadgeInicial();
 
 })();
 </script>
