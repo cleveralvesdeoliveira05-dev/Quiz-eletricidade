@@ -1,24 +1,33 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>O Caminho da Eletricidade</title>
+
 <style>
   :root{
-    --azul-escuro: #0B3D63;
-    --azul-escuro-2: #133F6B;
-    --azul-claro: #4FB6E8;
-    --azul-claro-2: #DDF3FC;
-    --verde: #34A853;
-    --verde-claro: #E7F8EC;
-    --amarelo: #FFC93C;
-    --amarelo-escuro: #E8A800;
-    --branco: #FFFFFF;
-    --cinza-texto: #365064;
-    --sombra: 0 10px 30px rgba(11, 61, 99, 0.12);
-    --sombra-forte: 0 16px 40px rgba(11, 61, 99, 0.22);
-    --radius: 22px;
+    --azul-escuro:#0B3D63;
+    --azul-escuro-2:#133F6B;
+    --azul-claro:#4FB6E8;
+    --azul-claro-2:#DDF3FC;
+    --verde:#34A853;
+    --verde-claro:#E7F8EC;
+    --amarelo:#FFC93C;
+    --amarelo-escuro:#E8A800;
+    --branco:#FFFFFF;
+    --cinza-texto:#365064;
+    --fundo-1:#F4FBFF;
+    --fundo-2:#EAF6FC;
+    --card:#FFFFFF;
+    --option:#F7FBFD;
+    --option-border:#E3F1F8;
+    --danger:#E0564A;
+    --danger-bg:#FDEAEA;
+    --sombra:0 10px 30px rgba(11,61,99,.12);
+    --sombra-forte:0 16px 40px rgba(11,61,99,.22);
+    --radius:22px;
   }
 
   *{box-sizing:border-box;}
@@ -27,13 +36,63 @@
     margin:0;
     padding:0;
     min-height:100vh;
-    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
     background:
-      radial-gradient(circle at 15% 10%, rgba(79,182,232,0.18), transparent 45%),
-      radial-gradient(circle at 85% 90%, rgba(255,201,60,0.15), transparent 45%),
-      linear-gradient(180deg, #F4FBFF 0%, #EAF6FC 100%);
-    color: var(--cinza-texto);
+      radial-gradient(circle at 15% 10%,rgba(79,182,232,.18),transparent 45%),
+      radial-gradient(circle at 85% 90%,rgba(255,201,60,.15),transparent 45%),
+      linear-gradient(180deg,var(--fundo-1) 0%,var(--fundo-2) 100%);
+    color:var(--cinza-texto);
     overflow-x:hidden;
+    transition:background .3s ease,color .3s ease;
+  }
+
+  body.dark{
+    --fundo-1:#071B2B;
+    --fundo-2:#0B263B;
+    --card:#102F46;
+    --branco:#102F46;
+    --cinza-texto:#D8EAF4;
+    --azul-claro-2:#163D56;
+    --option:#12344B;
+    --option-border:#28536D;
+    --verde-claro:#163E2A;
+    --danger-bg:#4A2424;
+    --azul-escuro:#7ED2F7;
+  }
+
+  body.dark .home-title,
+  body.dark .question-text,
+  body.dark .result-title,
+  body.dark .modal-title,
+  body.dark .quiz-top{
+    color:#8BD9FA;
+  }
+
+  body.dark .home-subtitle{color:#7CCBF0;}
+  body.dark .btn-secondary{
+    background:#12344B;
+    color:#9DDBF5;
+    border-color:#28536D;
+  }
+  body.dark .btn-secondary:hover{background:#18445E;}
+  body.dark .path-strip{background:#163D56;}
+  body.dark .path-strip .step-active{background:#204D68;}
+  body.dark .progress-track{background:#163D56;}
+  body.dark .option{color:#D8EAF4;}
+  body.dark .feedback-explanation{color:#D8EAF4;}
+  body.dark .modal-overlay{background:rgba(0,10,20,.72);}
+  body.dark .settings-row{
+    background:#12344B;
+    border-color:#28536D;
+  }
+  body.dark .settings-select{
+    background:#0D2A3F;
+    color:#E1F3FC;
+    border-color:#37647D;
+  }
+  body.dark .settings-modal .modal-close{
+    background:#4FB6E8;
+    color:#08243A;
   }
 
   #app{
@@ -41,355 +100,652 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding: 24px;
+    padding:24px;
   }
 
   .screen{
     width:100%;
-    max-width: 640px;
+    max-width:640px;
     display:none;
-    animation: fadeIn 0.6s ease;
+    animation:fadeIn .6s ease;
   }
-  .screen.active{ display:block; }
+
+  .screen.active{display:block;}
 
   @keyframes fadeIn{
-    from{ opacity:0; transform: translateY(18px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
-  @keyframes fadeInFast{
-    from{ opacity:0; transform: translateY(10px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
-  @keyframes popIn{
-    0%{ transform: scale(0.85); opacity:0; }
-    60%{ transform: scale(1.03); opacity:1; }
-    100%{ transform: scale(1); }
-  }
-  @keyframes bounce{
-    0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(-10px); }
-  }
-  @keyframes spinSlow{
-    from{ transform: rotate(0deg); }
-    to{ transform: rotate(360deg); }
-  }
-  @keyframes pulse{
-    0%,100%{ box-shadow: 0 0 0 0 rgba(255,201,60,0.55); }
-    50%{ box-shadow: 0 0 0 14px rgba(255,201,60,0); }
-  }
-  @keyframes shake{
-    10%,90%{ transform: translateX(-1px); }
-    20%,80%{ transform: translateX(2px); }
-    30%,50%,70%{ transform: translateX(-4px); }
-    40%,60%{ transform: translateX(4px); }
-  }
-  @keyframes confettiFall{
-    from{ transform: translateY(-40px) rotate(0deg); opacity:1; }
-    to{ transform: translateY(340px) rotate(360deg); opacity:0; }
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
   }
 
-  @media (prefers-reduced-motion: reduce){
-    *, *::before, *::after{
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+  @keyframes fadeInFast{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  @keyframes popIn{
+    0%{transform:scale(.85);opacity:0;}
+    60%{transform:scale(1.03);opacity:1;}
+    100%{transform:scale(1);}
+  }
+
+  @keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+  }
+
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(255,201,60,.55);}
+    50%{box-shadow:0 0 0 14px rgba(255,201,60,0);}
+  }
+
+  @keyframes shake{
+    10%,90%{transform:translateX(-1px);}
+    20%,80%{transform:translateX(2px);}
+    30%,50%,70%{transform:translateX(-4px);}
+    40%,60%{transform:translateX(4px);}
+  }
+
+  @keyframes confettiFall{
+    from{transform:translateY(-40px) rotate(0deg);opacity:1;}
+    to{transform:translateY(340px) rotate(360deg);opacity:0;}
+  }
+
+  @keyframes timerPulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+  }
+
+  @keyframes modalSlide{
+    from{opacity:0;transform:translateY(25px) scale(.97);}
+    to{opacity:1;transform:translateY(0) scale(1);}
+  }
+
+  .no-animations *,
+  .no-animations *::before,
+  .no-animations *::after{
+    animation:none !important;
+    transition:none !important;
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+      transition-duration:.01ms!important;
     }
   }
 
-  /* ---------- CARD BASE ---------- */
   .card{
-    background: var(--branco);
-    border-radius: var(--radius);
-    box-shadow: var(--sombra);
-    padding: 36px 30px;
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--sombra);
+    padding:36px 30px;
+    transition:background .3s ease,box-shadow .3s ease;
   }
 
+  /* ---------- BOTÃO DE CONFIGURAÇÕES ---------- */
+
+  .settings-button{
+    position:fixed;
+    top:18px;
+    right:18px;
+    width:48px;
+    height:48px;
+    border:0;
+    border-radius:50%;
+    background:var(--card);
+    color:var(--azul-escuro);
+    box-shadow:var(--sombra);
+    cursor:pointer;
+    z-index:40;
+    font-size:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .22s ease,box-shadow .22s ease,background .3s ease;
+  }
+
+  .settings-button:hover{
+    transform:rotate(25deg) scale(1.06);
+    box-shadow:var(--sombra-forte);
+  }
+
+  .settings-button:active{transform:scale(.94);}
+
   /* ---------- TELA INICIAL ---------- */
+
   .home-card{
     text-align:center;
     position:relative;
     overflow:hidden;
-    padding: 46px 30px 38px;
+    padding:46px 30px 38px;
   }
+
   .home-card::before{
     content:"";
     position:absolute;
-    top:-60px; right:-60px;
-    width:180px; height:180px;
-    background: radial-gradient(circle, rgba(255,201,60,0.35), transparent 70%);
+    top:-60px;
+    right:-60px;
+    width:180px;
+    height:180px;
+    background:radial-gradient(circle,rgba(255,201,60,.35),transparent 70%);
     border-radius:50%;
   }
+
   .home-card::after{
     content:"";
     position:absolute;
-    bottom:-70px; left:-70px;
-    width:200px; height:200px;
-    background: radial-gradient(circle, rgba(79,182,232,0.3), transparent 70%);
+    bottom:-70px;
+    left:-70px;
+    width:200px;
+    height:200px;
+    background:radial-gradient(circle,rgba(79,182,232,.3),transparent 70%);
     border-radius:50%;
   }
+
   .bolt-icon{
-    font-size: 54px;
+    font-size:54px;
     display:inline-block;
-    animation: bounce 2.4s ease-in-out infinite;
-    filter: drop-shadow(0 6px 10px rgba(255,201,60,0.5));
+    animation:bounce 2.4s ease-in-out infinite;
+    filter:drop-shadow(0 6px 10px rgba(255,201,60,.5));
   }
+
   .home-title{
-    font-size: clamp(24px, 5vw, 32px);
-    color: var(--azul-escuro);
-    margin: 10px 0 6px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
+    font-size:clamp(24px,5vw,32px);
+    color:var(--azul-escuro);
+    margin:10px 0 6px;
+    font-weight:800;
+    letter-spacing:.2px;
   }
+
   .home-subtitle{
-    font-size: clamp(15px, 3vw, 18px);
-    color: var(--azul-claro);
-    font-weight: 600;
-    margin-bottom: 22px;
+    font-size:clamp(15px,3vw,18px);
+    color:var(--azul-claro);
+    font-weight:600;
+    margin-bottom:22px;
   }
+
   .lollipop-line{
-    font-size: clamp(15px,3vw,17px);
-    background: var(--amarelo);
-    color: #6b4a00;
+    font-size:clamp(15px,3vw,17px);
+    background:var(--amarelo);
+    color:#6b4a00;
     display:inline-block;
-    padding: 10px 20px;
-    border-radius: 999px;
+    padding:10px 20px;
+    border-radius:999px;
     font-weight:700;
-    margin-bottom: 28px;
-    box-shadow: 0 6px 16px rgba(255,201,60,0.4);
+    margin-bottom:28px;
+    box-shadow:0 6px 16px rgba(255,201,60,.4);
   }
 
   .btn{
     border:none;
     cursor:pointer;
-    font-family: inherit;
-    font-weight: 700;
-    border-radius: 16px;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+    font-family:inherit;
+    font-weight:700;
+    border-radius:16px;
+    transition:transform .22s ease,box-shadow .22s ease,filter .22s ease;
   }
-  .btn:active{ transform: scale(0.96); }
+
+  .btn:active{transform:scale(.96);}
 
   .btn-primary{
-    background: linear-gradient(135deg, var(--azul-claro), #2E9FD6);
-    color: var(--branco);
-    font-size: clamp(17px,3.4vw,20px);
-    padding: 16px 46px;
-    box-shadow: 0 10px 24px rgba(46,159,214,0.45);
+    background:linear-gradient(135deg,var(--azul-claro),#2E9FD6);
+    color:#fff;
+    font-size:clamp(17px,3.4vw,20px);
+    padding:16px 46px;
+    box-shadow:0 10px 24px rgba(46,159,214,.45);
     display:inline-flex;
     align-items:center;
     gap:10px;
   }
-  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 14px 28px rgba(46,159,214,0.55); }
+
+  .btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(46,159,214,.55);
+  }
 
   .btn-secondary{
-    background: var(--branco);
-    color: var(--azul-escuro);
-    border: 2px solid var(--azul-claro-2);
-    font-size: clamp(14px,3vw,16px);
-    padding: 12px 26px;
-    margin-top: 18px;
+    background:var(--card);
+    color:var(--azul-escuro);
+    border:2px solid var(--azul-claro-2);
+    font-size:clamp(14px,3vw,16px);
+    padding:12px 26px;
+    margin-top:18px;
     display:inline-flex;
     align-items:center;
     gap:8px;
   }
-  .btn-secondary:hover{ background: var(--azul-claro-2); transform: translateY(-2px); }
 
-  /* ---------- MODAL REGRAS ---------- */
+  .btn-secondary:hover{
+    background:var(--azul-claro-2);
+    transform:translateY(-2px);
+  }
+
+  /* ---------- MODAIS ---------- */
+
   .modal-overlay{
-    position:fixed; inset:0;
-    background: rgba(11,61,99,0.45);
+    position:fixed;
+    inset:0;
+    background:rgba(11,61,99,.45);
     display:none;
     align-items:center;
     justify-content:center;
-    padding: 20px;
-    z-index: 50;
-    animation: fadeInFast 0.25s ease;
+    padding:20px;
+    z-index:50;
+    overflow-y:auto;
   }
-  .modal-overlay.active{ display:flex; }
+
+  .modal-overlay.active{
+    display:flex;
+    animation:fadeInFast .25s ease;
+  }
+
   .modal-box{
-    background: var(--branco);
-    border-radius: var(--radius);
-    padding: 30px 26px;
-    max-width: 420px;
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    max-width:420px;
     width:100%;
-    box-shadow: var(--sombra-forte);
-    animation: popIn 0.35s ease;
+    box-shadow:var(--sombra-forte);
+    animation:popIn .35s ease;
   }
+
   .modal-title{
-    color: var(--azul-escuro);
-    font-size: 22px;
-    font-weight: 800;
-    margin: 0 0 18px;
+    color:var(--azul-escuro);
+    font-size:22px;
+    font-weight:800;
+    margin:0 0 18px;
     text-align:center;
   }
+
   .rule-item{
     display:flex;
-    gap: 12px;
+    gap:12px;
     align-items:flex-start;
-    background: var(--azul-claro-2);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    font-size: 15px;
+    background:var(--azul-claro-2);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    font-size:15px;
     line-height:1.4;
   }
-  .rule-item.lollipop{ background: #FFF3D6; }
-  .rule-emoji{ font-size: 22px; flex-shrink:0; }
+
+  .rule-item.lollipop{background:#FFF3D6;}
+  .rule-emoji{font-size:22px;flex-shrink:0;}
+
   .modal-close{
     display:block;
-    margin: 16px auto 0;
-    background: var(--azul-escuro);
-    color: var(--branco);
-    padding: 12px 30px;
+    margin:16px auto 0;
+    background:var(--azul-escuro);
+    color:#fff;
+    padding:12px 30px;
     font-size:15px;
-    border-radius: 14px;
+    border-radius:14px;
   }
-  .modal-close:hover{ background: var(--azul-escuro-2); }
+
+  .modal-close:hover{background:var(--azul-escuro-2);}
 
   .name-modal-subtitle{
     text-align:center;
-    font-size: 15px;
-    color: var(--cinza-texto);
-    margin: 0 0 16px;
+    font-size:15px;
+    color:var(--cinza-texto);
+    margin:0 0 16px;
   }
+
   .name-input{
     width:100%;
-    font-family: inherit;
-    font-size: 16px;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 2px solid var(--azul-claro-2);
+    font-family:inherit;
+    font-size:16px;
+    padding:14px 16px;
+    border-radius:14px;
+    border:2px solid var(--azul-claro-2);
     outline:none;
-    color: var(--azul-escuro);
+    color:var(--azul-escuro);
     font-weight:600;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:border-color .2s ease,box-shadow .2s ease;
+    background:var(--card);
   }
+
   .name-input:focus{
-    border-color: var(--azul-claro);
-    box-shadow: 0 0 0 4px rgba(79,182,232,0.18);
+    border-color:var(--azul-claro);
+    box-shadow:0 0 0 4px rgba(79,182,232,.18);
   }
+
   .name-input.invalid{
-    border-color: #E0564A;
-    animation: shake 0.5s ease;
+    border-color:#E0564A;
+    animation:shake .5s ease;
   }
+
   .name-error{
-    color: #C7392E;
-    font-size: 13px;
+    color:#C7392E;
+    font-size:13px;
     font-weight:700;
-    margin: 8px 2px 0;
+    margin:8px 2px 0;
+  }
+
+  /* ---------- CONFIGURAÇÕES ---------- */
+
+  .settings-modal{
+    max-width:520px;
+    max-height:min(760px,92vh);
+    overflow-y:auto;
+    padding:26px;
+  }
+
+  .settings-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:18px;
+  }
+
+  .settings-header .modal-title{
+    margin:0;
+    flex:1;
+  }
+
+  .settings-x{
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:12px;
+    background:var(--azul-claro-2);
+    color:var(--azul-escuro);
+    font-size:20px;
+    font-weight:800;
+    cursor:pointer;
+  }
+
+  .settings-section-title{
+    color:var(--azul-claro);
+    font-size:13px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    margin:20px 0 9px;
+  }
+
+  .settings-row{
+    background:#F7FBFD;
+    border:1px solid #E3F1F8;
+    border-radius:16px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+
+  .settings-row-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .settings-label{
+    font-size:15px;
+    font-weight:800;
+    color:var(--cinza-texto);
+  }
+
+  .settings-description{
+    font-size:12px;
+    margin-top:3px;
+    opacity:.72;
+  }
+
+  .toggle{
+    position:relative;
+    width:52px;
+    height:30px;
+    flex-shrink:0;
+  }
+
+  .toggle input{
+    opacity:0;
+    width:0;
+    height:0;
+  }
+
+  .toggle-slider{
+    position:absolute;
+    inset:0;
+    background:#B9DCEC;
+    border-radius:999px;
+    cursor:pointer;
+    transition:.25s ease;
+  }
+
+  .toggle-slider::before{
+    content:"";
+    position:absolute;
+    width:22px;
+    height:22px;
+    left:4px;
+    top:4px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);
+    transition:.25s ease;
+  }
+
+  .toggle input:checked + .toggle-slider{
+    background:var(--verde);
+  }
+
+  .toggle input:checked + .toggle-slider::before{
+    transform:translateX(22px);
+  }
+
+  .range-wrap{
+    margin-top:12px;
+  }
+
+  .range-line{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .range-line input{
+    flex:1;
+    accent-color:var(--azul-claro);
+    cursor:pointer;
+  }
+
+  .range-value{
+    min-width:48px;
+    text-align:right;
+    font-size:13px;
+    font-weight:800;
+    color:var(--azul-claro);
+  }
+
+  .settings-select{
+    width:100%;
+    margin-top:10px;
+    padding:11px 12px;
+    border-radius:12px;
+    border:2px solid var(--azul-claro-2);
+    background:#fff;
+    color:var(--azul-escuro);
+    font-family:inherit;
+    font-weight:700;
+    outline:none;
+    cursor:pointer;
+  }
+
+  .settings-footer{
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+  }
+
+  .settings-footer .modal-close{
+    margin:0;
+    width:100%;
   }
 
   /* ---------- QUIZ ---------- */
+
   .quiz-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: var(--azul-escuro);
-    font-size: 15px;
+    margin-bottom:10px;
+    font-weight:700;
+    color:var(--azul-escuro);
+    font-size:15px;
+    gap:10px;
   }
+
+  .quiz-top-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
   .score-pill{
-    background: var(--verde-claro);
-    color: var(--verde);
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 800;
+    background:var(--verde-claro);
+    color:var(--verde);
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:800;
   }
+
+  .timer-pill{
+    background:var(--azul-claro-2);
+    color:var(--azul-escuro);
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:900;
+    min-width:66px;
+    text-align:center;
+    transition:background .2s ease,color .2s ease;
+  }
+
+  .timer-pill.warning{
+    background:#FFF3D6;
+    color:#9B6B00;
+    animation:timerPulse .8s ease-in-out infinite;
+  }
+
+  .timer-pill.danger{
+    background:var(--danger-bg);
+    color:#C7392E;
+    animation:timerPulse .55s ease-in-out infinite;
+  }
+
+  .timer-pill.unlimited{
+    background:var(--azul-claro-2);
+    color:var(--azul-claro);
+  }
+
   .progress-track{
     width:100%;
-    height: 12px;
-    background: var(--azul-claro-2);
-    border-radius: 999px;
+    height:12px;
+    background:var(--azul-claro-2);
+    border-radius:999px;
     overflow:hidden;
-    margin-bottom: 22px;
+    margin-bottom:22px;
   }
+
   .progress-fill{
     height:100%;
     width:10%;
-    background: linear-gradient(90deg, var(--azul-claro), var(--verde));
+    background:linear-gradient(90deg,var(--azul-claro),var(--verde));
     border-radius:999px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    transition:width .5s cubic-bezier(.4,0,.2,1);
   }
 
   .path-strip{
     display:flex;
     align-items:center;
     justify-content:center;
-    gap: 6px;
-    flex-wrap: wrap;
-    background: var(--azul-claro-2);
-    border-radius: 14px;
-    padding: 10px 8px;
-    margin-bottom: 20px;
-    font-size: 20px;
-  }
-  .path-strip .arrow{
-    color: var(--azul-claro);
-    font-size: 16px;
-  }
-  .path-strip .step-active{
-    background: var(--branco);
-    border-radius: 10px;
-    padding: 4px 8px;
-    box-shadow: 0 4px 10px rgba(11,61,99,0.15);
-    animation: pulse 1.8s ease-in-out infinite;
+    gap:6px;
+    flex-wrap:wrap;
+    background:var(--azul-claro-2);
+    border-radius:14px;
+    padding:10px 8px;
+    margin-bottom:20px;
+    font-size:20px;
   }
 
-  .question-card{
-    animation: fadeInFast 0.45s ease;
+  .path-strip .arrow{
+    color:var(--azul-claro);
+    font-size:16px;
   }
+
+  .path-strip .step-active{
+    background:var(--card);
+    border-radius:10px;
+    padding:4px 8px;
+    box-shadow:0 4px 10px rgba(11,61,99,.15);
+    animation:pulse 1.8s ease-in-out infinite;
+  }
+
+  .question-card{animation:fadeInFast .45s ease;}
+
   .question-text{
-    color: var(--azul-escuro);
-    font-size: clamp(18px,3.6vw,21px);
-    font-weight: 800;
-    margin: 4px 0 20px;
+    color:var(--azul-escuro);
+    font-size:clamp(18px,3.6vw,21px);
+    font-weight:800;
+    margin:4px 0 20px;
     line-height:1.4;
   }
 
   .options{
     display:flex;
     flex-direction:column;
-    gap: 12px;
-    margin-bottom: 26px;
+    gap:12px;
+    margin-bottom:26px;
   }
+
   .option{
     display:flex;
     align-items:center;
-    gap: 14px;
-    background: #F7FBFD;
-    border: 2px solid #E3F1F8;
-    border-radius: 16px;
-    padding: 14px 16px;
+    gap:14px;
+    background:var(--option);
+    border:2px solid var(--option-border);
+    border-radius:16px;
+    padding:14px 16px;
     cursor:pointer;
-    font-size: clamp(14px,3vw,16px);
-    font-weight: 600;
-    color: var(--cinza-texto);
-    transition: all 0.22s ease;
+    font-size:clamp(14px,3vw,16px);
+    font-weight:600;
+    color:var(--cinza-texto);
+    transition:all .22s ease;
   }
+
   .option:hover{
-    border-color: var(--azul-claro);
-    transform: translateX(4px);
-    background: var(--azul-claro-2);
+    border-color:var(--azul-claro);
+    transform:translateX(4px);
+    background:var(--azul-claro-2);
   }
+
   .option .dot{
-    width: 22px; height:22px;
+    width:22px;
+    height:22px;
     border-radius:50%;
-    border: 2.5px solid #B9DCEC;
+    border:2.5px solid #B9DCEC;
     flex-shrink:0;
-    transition: all 0.22s ease;
+    transition:all .22s ease;
     position:relative;
   }
+
   .option.selected{
-    border-color: var(--verde);
-    background: var(--verde-claro);
-    transform: scale(1.015);
-    box-shadow: 0 6px 16px rgba(52,168,83,0.2);
+    border-color:var(--verde);
+    background:var(--verde-claro);
+    transform:scale(1.015);
+    box-shadow:0 6px 16px rgba(52,168,83,.2);
   }
+
   .option.selected .dot{
-    border-color: var(--verde);
-    background: var(--verde);
+    border-color:var(--verde);
+    background:var(--verde);
   }
+
   .option.selected .dot::after{
     content:"✓";
     position:absolute;
@@ -397,20 +753,22 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    color: var(--branco);
-    font-size: 13px;
+    color:#fff;
+    font-size:13px;
     font-weight:900;
   }
 
   .option.correct{
-    border-color: var(--verde);
-    background: var(--verde-claro);
-    box-shadow: 0 6px 16px rgba(52,168,83,0.2);
+    border-color:var(--verde);
+    background:var(--verde-claro);
+    box-shadow:0 6px 16px rgba(52,168,83,.2);
   }
+
   .option.correct .dot{
-    border-color: var(--verde);
-    background: var(--verde);
+    border-color:var(--verde);
+    background:var(--verde);
   }
+
   .option.correct .dot::after{
     content:"✓";
     position:absolute;
@@ -418,19 +776,22 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    color: var(--branco);
-    font-size: 13px;
+    color:#fff;
+    font-size:13px;
     font-weight:900;
   }
+
   .option.incorrect{
-    border-color: #E0564A;
-    background: #FDEAEA;
-    animation: shake 0.5s ease;
+    border-color:#E0564A;
+    background:var(--danger-bg);
+    animation:shake .5s ease;
   }
+
   .option.incorrect .dot{
-    border-color: #E0564A;
-    background: #E0564A;
+    border-color:#E0564A;
+    background:#E0564A;
   }
+
   .option.incorrect .dot::after{
     content:"✕";
     position:absolute;
@@ -438,617 +799,135 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    color: var(--branco);
-    font-size: 12px;
+    color:#fff;
+    font-size:12px;
     font-weight:900;
   }
-  .options.answered .option{
-    cursor: default;
-  }
+
+  .options.answered .option{cursor:default;}
+
   .options.answered .option:hover{
     transform:none;
-    background: inherit;
-    border-color: inherit;
+    background:inherit;
+    border-color:inherit;
   }
-  .options.answered .option.correct:hover{ background: var(--verde-claro); }
-  .options.answered .option.incorrect:hover{ background: #FDEAEA; }
+
+  .options.answered .option.correct:hover{background:var(--verde-claro);}
+  .options.answered .option.incorrect:hover{background:var(--danger-bg);}
 
   .feedback-box{
-    border-radius: 16px;
-    padding: 16px 18px;
-    margin-bottom: 20px;
-    animation: popIn 0.4s ease;
+    border-radius:16px;
+    padding:16px 18px;
+    margin-bottom:20px;
+    animation:popIn .4s ease;
   }
+
   .feedback-box.correct{
-    background: var(--verde-claro);
-    border: 2px solid var(--verde);
+    background:var(--verde-claro);
+    border:2px solid var(--verde);
   }
+
   .feedback-box.incorrect{
-    background: #FDEAEA;
-    border: 2px solid #E0564A;
-    animation: popIn 0.4s ease, shake 0.5s ease;
+    background:var(--danger-bg);
+    border:2px solid #E0564A;
+    animation:popIn .4s ease,shake .5s ease;
   }
+
+  .feedback-box.timeout{
+    background:#FFF3D6;
+    border:2px solid var(--amarelo-escuro);
+  }
+
+  body.dark .feedback-box.timeout{
+    background:#493D20;
+    border-color:#D3A62A;
+  }
+
   .feedback-title{
-    font-size: 17px;
-    font-weight: 900;
-    margin: 0 0 6px;
+    font-size:17px;
+    font-weight:900;
+    margin:0 0 6px;
   }
-  .feedback-box.correct .feedback-title{ color: var(--verde); }
-  .feedback-box.incorrect .feedback-title{ color: #C7392E; }
+
+  .feedback-box.correct .feedback-title{color:var(--verde);}
+  .feedback-box.incorrect .feedback-title{color:#C7392E;}
+  .feedback-box.timeout .feedback-title{color:#9B6B00;}
+
   .feedback-explanation{
-    font-size: 14px;
+    font-size:14px;
     margin:0;
-    color: var(--cinza-texto);
+    color:var(--cinza-texto);
     line-height:1.4;
   }
 
   .btn-next{
     width:100%;
-    background: linear-gradient(135deg, #BFE3F2, #A9D9EE);
-    color: #7CA7BB;
-    font-size: 17px;
-    padding: 15px;
+    background:linear-gradient(135deg,#BFE3F2,#A9D9EE);
+    color:#7CA7BB;
+    font-size:17px;
+    padding:15px;
     cursor:not-allowed;
     display:flex;
     align-items:center;
     justify-content:center;
     gap:8px;
   }
+
   .btn-next.enabled{
-    background: linear-gradient(135deg, var(--verde), #2C9148);
-    color: var(--branco);
+    background:linear-gradient(135deg,var(--verde),#2C9148);
+    color:#fff;
     cursor:pointer;
-    box-shadow: 0 10px 22px rgba(52,168,83,0.4);
+    box-shadow:0 10px 22px rgba(52,168,83,.4);
   }
-  .btn-next.enabled:hover{ transform: translateY(-3px); }
+
+  .btn-next.enabled:hover{transform:translateY(-3px);}
 
   /* ---------- RESULTADO ---------- */
+
   .result-card{
     text-align:center;
     position:relative;
     overflow:hidden;
-    padding: 42px 28px;
+    padding:42px 28px;
   }
+
   .result-emoji{
-    font-size: 56px;
-    animation: popIn 0.6s ease;
+    font-size:56px;
+    animation:popIn .6s ease;
   }
-  .result-emoji.win{ animation: popIn 0.6s ease, bounce 2s ease-in-out 0.6s infinite; }
+
+  .result-emoji.win{
+    animation:popIn .6s ease,bounce 2s ease-in-out .6s infinite;
+  }
+
   .result-title{
-    color: var(--azul-escuro);
-    font-size: 26px;
-    font-weight: 900;
-    margin: 12px 0 6px;
+    color:var(--azul-escuro);
+    font-size:26px;
+    font-weight:900;
+    margin:12px 0 6px;
   }
+
   .result-score{
-    font-size: 18px;
-    color: var(--cinza-texto);
-    margin-bottom: 4px;
+    font-size:18px;
+    color:var(--cinza-texto);
+    margin-bottom:4px;
   }
+
   .result-percent{
-    font-size: 42px;
-    font-weight: 900;
-    color: var(--azul-claro);
-    margin: 6px 0 18px;
-    animation: popIn 0.7s ease;
+    font-size:42px;
+    font-weight:900;
+    color:var(--azul-claro);
+    margin:6px 0 18px;
+    animation:popIn .7s ease;
   }
+
   .result-message{
-    font-size: 16px;
+    font-size:16px;
     line-height:1.5;
-    margin-bottom: 24px;
-    padding: 14px 16px;
-    border-radius: 14px;
-  }
-  .result-message.win{ background: #FFF3D6; color: #7A5900; }
-  .result-message.lose{ background: var(--azul-claro-2); color: var(--azul-escuro); }
-  .result-estande{
-    font-size: 15px;
-    font-weight: 700;
-    color: #7A5900;
-    background: #FFF3D6;
-    border-radius: 12px;
-    padding: 10px 14px;
-    margin: -8px 0 24px;
-    animation: popIn 0.5s ease;
+    margin-bottom:24px;
+    padding:14px 16px;
+    border-radius:14px;
   }
 
-  .confetti{
-    position:absolute;
-    top:0; left:0; width:100%; height:100%;
-    pointer-events:none;
-    overflow:hidden;
-  }
-  .confetti span{
-    position:absolute;
-    top:-20px;
-    font-size: 20px;
-    animation: confettiFall 2.2s ease-in forwards;
-  }
-
-  footer.credit{
-    text-align:center;
-    font-size:12px;
-    color:#8FADC0;
-    margin-top: 18px;
-  }
-
-  @media (max-width:480px){
-    .card{ padding: 26px 18px; }
-    .path-strip{ font-size:17px; }
-  }
-</style>
-</head>
-<body>
-
-<div id="app">
-
-  <!-- TELA INICIAL -->
-  <section class="screen active" id="screen-home">
-    <div class="card home-card">
-      <span class="bolt-icon">⚡</span>
-      <h1 class="home-title">O CAMINHO DA ELETRICIDADE</h1>
-      <p class="home-subtitle">Da usina até a nossa casa!</p>
-      <div class="lollipop-line">🍭 Responda e ganhe um pirulito!</div>
-      <br>
-      <button class="btn btn-primary" id="btn-play">▶️ JOGAR</button>
-      <br>
-      <button class="btn btn-secondary" id="btn-rules">📋 REGRAS</button>
-    </div>
-  </section>
-
-  <!-- QUIZ -->
-  <section class="screen" id="screen-quiz">
-    <div class="quiz-top">
-      <span id="question-counter">Pergunta 1 de 5</span>
-      <span class="score-pill">⭐ <span id="score-count">0</span> pontos</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-
-    <div class="path-strip" id="path-strip"></div>
-
-    <div class="card question-card" id="question-card">
-      <p class="question-text" id="question-text"></p>
-      <div class="options" id="options-container"></div>
-      <div class="feedback-box" id="feedback-box" style="display:none;">
-        <p class="feedback-title" id="feedback-title"></p>
-        <p class="feedback-explanation" id="feedback-explanation"></p>
-      </div>
-      <button class="btn btn-next" id="btn-next">➡️ PRÓXIMA</button>
-    </div>
-  </section>
-
-  <!-- RESULTADO -->
-  <section class="screen" id="screen-result">
-    <div class="card result-card" id="result-card">
-      <div class="confetti" id="confetti"></div>
-      <div class="result-emoji" id="result-emoji">🎉</div>
-      <h2 class="result-title">QUIZ CONCLUÍDO!</h2>
-      <p class="result-score">Você acertou <strong id="result-hits">0</strong> de 5 perguntas.</p>
-      <div class="result-percent"><span id="result-percent">0</span>%</div>
-      <div class="result-message" id="result-message"></div>
-      <p class="result-estande" id="result-estande" style="display:none;">🍭 Vá ao estande e mostre para o dono (Pedro).</p>
-      <button class="btn btn-primary" id="btn-restart">🔄 JOGAR NOVAMENTE</button>
-    </div>
-  </section>
-
-</div>
-
-<!-- MODAL REGRAS -->
-<div class="modal-overlay" id="modal-rules">
-  <div class="modal-box">
-    <h3 class="modal-title">📋 Regras</h3>
-    <div class="rule-item">
-      <span class="rule-emoji">🚫</span>
-      <span>Não trapaceie! Responda com o que você aprendeu no trabalho.</span>
-    </div>
-    <div class="rule-item">
-      <span class="rule-emoji">😄</span>
-      <span>Se divirta! O quiz é para testar e reforçar seu aprendizado.</span>
-    </div>
-    <div class="rule-item lollipop">
-      <span class="rule-emoji">🍭</span>
-      <span>Responda às 5 perguntas e acerte pelo menos 3 para ganhar o pirulito.</span>
-    </div>
-    <button class="btn modal-close" id="btn-close-rules">Entendi!</button>
-  </div>
-</div>
-
-<!-- MODAL NOME DO PARTICIPANTE -->
-<div class="modal-overlay" id="modal-name">
-  <div class="modal-box">
-    <h3 class="modal-title">✏️ Antes de começar</h3>
-    <p class="name-modal-subtitle">Qual é o seu nome?</p>
-    <input type="text" id="input-name" class="name-input" placeholder="Digite seu nome" maxlength="40" autocomplete="off">
-    <p class="name-error" id="name-error" style="display:none;">Por favor, digite seu nome para continuar.</p>
-    <button class="btn modal-close" id="btn-start-quiz">▶️ Começar</button>
-  </div>
-</div>
-
-<script>
-(function(){
-  "use strict";
-
-  // ---------- BANCO DE 50 PERGUNTAS ----------
-  const QUESTIONS_PER_GAME = 5;
-
-  const questionBank = [
-    { text: "O que é eletricidade?", options: ["Uma forma de energia","Um tipo de alimento","Um tipo de planta","Um tipo de metal"], correct: 0, explanation: "A eletricidade é uma forma de energia usada para fazer aparelhos funcionarem." },
-    { text: "Qual destas é uma fonte de energia renovável?", options: ["Petróleo","Carvão mineral","Vento","Gasolina"], correct: 2, explanation: "O vento é uma fonte de energia renovável, pois se renova naturalmente." },
-    { text: "Qual equipamento gera energia elétrica em muitas usinas?", options: ["Gerador","Interruptor","Tomada","Lâmpada"], correct: 0, explanation: "O gerador é o equipamento responsável por gerar energia elétrica nas usinas." },
-    { text: "Qual usina utiliza a força da água para produzir eletricidade?", options: ["Eólica","Hidrelétrica","Termelétrica","Nuclear"], correct: 1, explanation: "A usina hidrelétrica usa a força da água para gerar eletricidade." },
-    { text: "Qual usina utiliza a força do vento para produzir eletricidade?", options: ["Hidrelétrica","Termelétrica","Eólica","Nuclear"], correct: 2, explanation: "A usina eólica usa a força do vento para gerar eletricidade." },
-    { text: "Qual usina utiliza o calor para produzir eletricidade?", options: ["Termelétrica","Eólica","Hidrelétrica","Solar"], correct: 0, explanation: "A usina termelétrica usa calor, geralmente da queima de combustíveis, para gerar eletricidade." },
-    { text: "Qual fonte de energia utiliza a luz do Sol?", options: ["Solar","Eólica","Hidrelétrica","Termelétrica"], correct: 0, explanation: "A energia solar aproveita a luz do Sol para gerar eletricidade." },
-    { text: "Para que serve um transformador elétrico?", options: ["Alterar a tensão elétrica","Produzir água","Armazenar vento","Criar combustível"], correct: 0, explanation: "O transformador altera (aumenta ou diminui) a tensão elétrica." },
-    { text: "Qual destes materiais é um bom condutor de eletricidade?", options: ["Borracha","Plástico","Cobre","Madeira"], correct: 2, explanation: "O cobre é um excelente condutor de eletricidade, por isso é usado em fios." },
-    { text: "Qual material é geralmente usado para proteger os fios elétricos?", options: ["Cobre","Plástico","Ferro","Alumínio"], correct: 1, explanation: "O plástico, por ser isolante, é usado para proteger os fios elétricos." },
-    { text: "Para que serve uma tomada?", options: ["Gerar eletricidade","Conectar aparelhos à instalação elétrica","Produzir vento","Transformar água em energia"], correct: 1, explanation: "A tomada conecta os aparelhos à rede elétrica da casa." },
-    { text: "Qual é a função de um interruptor?", options: ["Ligar ou interromper um circuito","Produzir eletricidade","Armazenar energia","Aumentar a temperatura da água"], correct: 0, explanation: "O interruptor liga ou interrompe a passagem de corrente em um circuito." },
-    { text: "O que acontece em um circuito aberto?", options: ["A corrente circula normalmente","A corrente não percorre o circuito completo","A lâmpada fica mais forte","A bateria desaparece"], correct: 1, explanation: "Em um circuito aberto, há uma interrupção e a corrente não consegue completar o percurso." },
-    { text: "O que acontece em um circuito fechado?", options: ["A corrente pode circular","A corrente sempre para","Os fios deixam de conduzir","A bateria deixa de funcionar imediatamente"], correct: 0, explanation: "Em um circuito fechado, o caminho está completo e a corrente pode circular." },
-    { text: "Qual aparelho transforma energia elétrica principalmente em luz?", options: ["Ventilador","Lâmpada","Geladeira","Liquidificador"], correct: 1, explanation: "A lâmpada transforma energia elétrica principalmente em luz." },
-    { text: "Qual aparelho transforma energia elétrica principalmente em movimento?", options: ["Ventilador","Lâmpada","Chuveiro","Ferro de passar"], correct: 0, explanation: "O ventilador transforma energia elétrica principalmente em movimento." },
-    { text: "Qual aparelho transforma energia elétrica principalmente em calor?", options: ["Rádio","Ferro de passar","Ventilador","Televisão"], correct: 1, explanation: "O ferro de passar transforma energia elétrica principalmente em calor." },
-    { text: "Qual é a principal função de uma usina elétrica?", options: ["Produzir alimentos","Gerar energia elétrica","Construir casas","Produzir água potável"], correct: 1, explanation: "A principal função de uma usina é gerar energia elétrica." },
-    { text: "O que movimenta as turbinas de uma hidrelétrica?", options: ["A água","A areia","O petróleo","A luz da Lua"], correct: 0, explanation: "Nas hidrelétricas, a água em movimento é que movimenta as turbinas." },
-    { text: "O que movimenta as turbinas de uma usina eólica?", options: ["Água","Vento","Carvão","Petróleo"], correct: 1, explanation: "Nas usinas eólicas, o vento é que movimenta as turbinas." },
-    { text: "Qual é a função de uma rede de transmissão?", options: ["Transportar energia elétrica por longas distâncias","Produzir alimentos","Armazenar água","Fabricar aparelhos"], correct: 0, explanation: "As redes de transmissão transportam a eletricidade por longas distâncias." },
-    { text: "Qual é a função de uma rede de distribuição?", options: ["Levar energia elétrica até os consumidores","Produzir combustível","Criar vento","Construir usinas"], correct: 0, explanation: "A rede de distribuição leva a energia elétrica até os consumidores finais." },
-    { text: "Qual destas fontes de energia é não renovável?", options: ["Sol","Vento","Petróleo","Água"], correct: 2, explanation: "O petróleo é uma fonte de energia não renovável, pois se esgota com o uso." },
-    { text: "Qual destas fontes de energia é renovável?", options: ["Carvão mineral","Petróleo","Gás natural","Sol"], correct: 3, explanation: "A energia solar é renovável, pois vem do Sol e não se esgota." },
-    { text: "Por que o cobre é utilizado em fios elétricos?", options: ["Porque é um bom condutor","Porque é um isolante","Porque não conduz eletricidade","Porque produz energia sozinho"], correct: 0, explanation: "O cobre é usado em fios porque é um excelente condutor de eletricidade." },
-    { text: "Qual é a função dos fios elétricos em um circuito?", options: ["Conduzir a corrente elétrica","Produzir água","Criar combustível","Armazenar vento"], correct: 0, explanation: "Os fios elétricos servem para conduzir a corrente elétrica pelo circuito." },
-    { text: "O que é corrente elétrica?", options: ["Movimento ordenado de cargas elétricas","Movimento da água","Movimento do vento","Movimento de objetos"], correct: 0, explanation: "A corrente elétrica é o movimento ordenado de cargas elétricas em um condutor." },
-    { text: "O que é resistência elétrica?", options: ["Oposição à passagem da corrente elétrica","Produção de água","Velocidade do vento","Quantidade de luz"], correct: 0, explanation: "A resistência elétrica é a oposição que um material oferece à passagem da corrente." },
-    { text: "Qual aparelho é usado para medir a tensão elétrica?", options: ["Voltímetro","Termômetro","Balança","Régua"], correct: 0, explanation: "O voltímetro é o aparelho usado para medir a tensão elétrica." },
-    { text: "Qual aparelho é usado para medir a corrente elétrica?", options: ["Amperímetro","Termômetro","Barômetro","Régua"], correct: 0, explanation: "O amperímetro é o aparelho usado para medir a corrente elétrica." },
-    { text: "O que pode acontecer quando muitos aparelhos são ligados em uma mesma instalação?", options: ["Pode ocorrer uma sobrecarga","A eletricidade desaparece","A casa começa a produzir energia","Os aparelhos deixam de precisar de energia"], correct: 0, explanation: "Ligar muitos aparelhos ao mesmo tempo pode causar sobrecarga na instalação elétrica." },
-    { text: "Qual atitude ajuda a economizar energia elétrica?", options: ["Deixar as luzes acesas","Desligar aparelhos que não estão sendo usados","Deixar a televisão ligada sem assistir","Abrir a geladeira várias vezes"], correct: 1, explanation: "Desligar aparelhos que não estão em uso ajuda a economizar energia." },
-    { text: "Por que devemos apagar as luzes quando saímos de um ambiente?", options: ["Para economizar energia","Para aumentar a temperatura","Para produzir mais eletricidade","Para aumentar a tensão"], correct: 0, explanation: "Apagar as luzes ao sair de um ambiente evita o desperdício e economiza energia." },
-    { text: "Qual destes aparelhos normalmente utiliza energia elétrica?", options: ["Televisão","Caderno","Lápis","Livro"], correct: 0, explanation: "A televisão é um aparelho elétrico e, por isso, consome energia elétrica." },
-    { text: "Qual é o caminho geral da eletricidade até uma casa?", options: ["Usina → transmissão → distribuição → casa","Casa → usina → distribuição → transmissão","Distribuição → casa → usina → transmissão","Transmissão → usina → casa → distribuição"], correct: 0, explanation: "O caminho da eletricidade segue da usina, passa pela transmissão, depois pela distribuição, até chegar à casa." },
-    { text: "Qual é a função das linhas de transmissão?", options: ["Transportar energia elétrica","Produzir alimentos","Armazenar água","Produzir combustível"], correct: 0, explanation: "As linhas de transmissão têm a função de transportar a energia elétrica por longas distâncias." },
-    { text: "O que acontece com a energia elétrica quando acendemos uma lâmpada?", options: ["Ela é transformada principalmente em luz","Ela desaparece","Ela vira água","Ela vira vento"], correct: 0, explanation: "Ao acender uma lâmpada, a energia elétrica é transformada principalmente em luz." },
-    { text: "O que acontece quando ligamos um ventilador?", options: ["A energia elétrica é transformada principalmente em movimento","A energia elétrica vira água","A energia elétrica desaparece","A energia elétrica vira combustível"], correct: 0, explanation: "Ao ligar um ventilador, a energia elétrica é transformada principalmente em movimento." },
-    { text: "Qual destas é uma fonte de energia limpa e renovável?", options: ["Energia solar","Energia do carvão","Energia do petróleo","Energia da gasolina"], correct: 0, explanation: "A energia solar é considerada limpa e renovável, pois vem do Sol." },
-    { text: "Qual usina aproveita a energia do Sol?", options: ["Solar","Hidrelétrica","Eólica","Termelétrica"], correct: 0, explanation: "A usina solar aproveita a energia da luz do Sol para gerar eletricidade." },
-    { text: "Qual usina aproveita a energia dos rios?", options: ["Hidrelétrica","Eólica","Solar","Nuclear"], correct: 0, explanation: "A usina hidrelétrica aproveita a força da água dos rios para gerar eletricidade." },
-    { text: "Qual usina aproveita a força dos ventos?", options: ["Nuclear","Hidrelétrica","Eólica","Termelétrica"], correct: 2, explanation: "A usina eólica aproveita a força do vento para gerar eletricidade." },
-    { text: "Qual destas opções representa uma transformação de energia?", options: ["Energia elétrica → luz","Água → caderno","Vento → lápis","Papel → tomada"], correct: 0, explanation: "Transformar energia elétrica em luz é um exemplo de transformação de energia." },
-    { text: "Por que a eletricidade é importante no nosso dia a dia?", options: ["Porque permite o funcionamento de muitos aparelhos","Porque substitui todos os alimentos","Porque produz somente água","Porque funciona apenas durante o dia"], correct: 0, explanation: "A eletricidade é importante porque permite o funcionamento de diversos aparelhos do dia a dia." },
-    { text: "Qual é a função de uma subestação elétrica?", options: ["Ajudar a transformar e controlar a tensão elétrica","Produzir água potável","Criar vento","Armazenar alimentos"], correct: 0, explanation: "A subestação ajuda a transformar e controlar a tensão elétrica ao longo do caminho da energia." },
-    { text: "Por que a eletricidade é transportada em alta tensão nas linhas de transmissão?", options: ["Para reduzir perdas de energia durante o transporte","Para deixar as casas mais iluminadas","Para aumentar o tamanho dos postes","Para produzir eletricidade dentro das casas"], correct: 0, explanation: "Transportar em alta tensão reduz as perdas de energia ao longo do trajeto." },
-    { text: "O que acontece com a eletricidade depois de sair da usina?", options: ["Ela é transmitida e depois distribuída aos consumidores","Ela vai diretamente para as lâmpadas","Ela desaparece","Ela é transformada em água"], correct: 0, explanation: "Depois de sair da usina, a eletricidade é transmitida e, em seguida, distribuída até os consumidores." },
-    { text: "Qual é a função dos postes da rede elétrica?", options: ["Sustentar os cabos da rede elétrica","Produzir eletricidade","Armazenar energia","Transformar vento em energia"], correct: 0, explanation: "Os postes têm a função de sustentar os cabos que conduzem a energia elétrica." },
-    { text: "Qual aparelho pode transformar energia elétrica em calor?", options: ["Chuveiro elétrico","Ventilador","Rádio","Televisão"], correct: 0, explanation: "O chuveiro elétrico transforma energia elétrica em calor para aquecer a água." },
-    { text: "Qual frase melhor representa o caminho da eletricidade?", options: ["A energia é gerada, transmitida, distribuída e chega aos consumidores","A energia começa nas casas e termina nas usinas","A energia é produzida somente pelas tomadas","A energia existe apenas dentro das lâmpadas"], correct: 0, explanation: "A energia elétrica é gerada, transmitida, distribuída e finalmente chega aos consumidores." }
-  ];
-
-  // Etapas do caminho para o mini-mapa visual
-  const pathSteps = [
-    { icon: "⚡", label: "Usina" },
-    { icon: "🗼", label: "Torres" },
-    { icon: "🏭", label: "Subestação" },
-    { icon: "🔌", label: "Distribuição" },
-    { icon: "🏠🏫🏥🏪", label: "Consumidores" }
-  ];
-
-  // ---------- SORTEIO / EMBARALHAMENTO ----------
-  function shuffleArray(arr){
-    const a = arr.slice();
-    for(let i = a.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * (i + 1));
-      const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-    }
-    return a;
-  }
-
-  // Sorteia 5 perguntas distintas do banco de 50 e embaralha as alternativas de cada uma,
-  // recalculando o índice da resposta correta após o embaralhamento.
-  function buildGameQuestions(){
-    const sorteadas = shuffleArray(questionBank).slice(0, QUESTIONS_PER_GAME);
-    return sorteadas.map(q => {
-      const opcoesComFlag = q.options.map((texto, idx) => ({ texto, correta: idx === q.correct }));
-      const opcoesEmbaralhadas = shuffleArray(opcoesComFlag);
-      const novoIndiceCorreto = opcoesEmbaralhadas.findIndex(o => o.correta);
-      return {
-        text: q.text,
-        options: opcoesEmbaralhadas.map(o => o.texto),
-        correct: novoIndiceCorreto,
-        explanation: q.explanation
-      };
-    });
-  }
-
-  // ---------- ESTADO ----------
-  let questions = [];
-  let currentQuestion = 0;
-  let score = 0;
-  let selectedOption = null;
-  let answers = new Array(questions.length).fill(null);
-  let participantName = "";
-
-  // ---------- ELEMENTOS ----------
-  const screenHome = document.getElementById('screen-home');
-  const screenQuiz = document.getElementById('screen-quiz');
-  const screenResult = document.getElementById('screen-result');
-
-  const btnPlay = document.getElementById('btn-play');
-  const btnRules = document.getElementById('btn-rules');
-  const btnCloseRules = document.getElementById('btn-close-rules');
-  const modalRules = document.getElementById('modal-rules');
-
-  const modalName = document.getElementById('modal-name');
-  const inputName = document.getElementById('input-name');
-  const nameError = document.getElementById('name-error');
-  const btnStartQuiz = document.getElementById('btn-start-quiz');
-
-  const questionCounter = document.getElementById('question-counter');
-  const scoreCount = document.getElementById('score-count');
-  const progressFill = document.getElementById('progress-fill');
-  const pathStrip = document.getElementById('path-strip');
-  const questionCard = document.getElementById('question-card');
-  const questionText = document.getElementById('question-text');
-  const optionsContainer = document.getElementById('options-container');
-  const btnNext = document.getElementById('btn-next');
-  const feedbackBox = document.getElementById('feedback-box');
-  const feedbackTitle = document.getElementById('feedback-title');
-  const feedbackExplanation = document.getElementById('feedback-explanation');
-  const resultEstande = document.getElementById('result-estande');
-
-  const resultHits = document.getElementById('result-hits');
-  const resultPercent = document.getElementById('result-percent');
-  const resultEmoji = document.getElementById('result-emoji');
-  const resultMessage = document.getElementById('result-message');
-  const resultCard = document.getElementById('result-card');
-  const confettiBox = document.getElementById('confetti');
-  const btnRestart = document.getElementById('btn-restart');
-
-  function showScreen(screen){
-    [screenHome, screenQuiz, screenResult].forEach(s => s.classList.remove('active'));
-    screen.classList.add('active');
-  }
-
-  // ---------- REGRAS (MODAL) ----------
-  btnRules.addEventListener('click', () => modalRules.classList.add('active'));
-  btnCloseRules.addEventListener('click', () => modalRules.classList.remove('active'));
-  modalRules.addEventListener('click', (e) => {
-    if(e.target === modalRules) modalRules.classList.remove('active');
-  });
-
-  // ---------- JOGAR ----------
-  btnPlay.addEventListener('click', () => {
-    nameError.style.display = 'none';
-    inputName.classList.remove('invalid');
-    inputName.value = "";
-    modalName.classList.add('active');
-    setTimeout(() => inputName.focus(), 200);
-  });
-
-  modalName.addEventListener('click', (e) => {
-    if(e.target === modalName) modalName.classList.remove('active');
-  });
-
-  function tentarComecarQuiz(){
-    const nome = inputName.value.trim();
-    if(nome === ""){
-      nameError.style.display = 'block';
-      inputName.classList.add('invalid');
-      inputName.focus();
-      return;
-    }
-    participantName = nome;
-    modalName.classList.remove('active');
-    resetQuiz();
-    showScreen(screenQuiz);
-    renderQuestion();
-  }
-
-  btnStartQuiz.addEventListener('click', tentarComecarQuiz);
-  inputName.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') tentarComecarQuiz();
-  });
-  inputName.addEventListener('input', () => {
-    if(inputName.value.trim() !== ""){
-      nameError.style.display = 'none';
-      inputName.classList.remove('invalid');
-    }
-  });
-
-  function resetQuiz(){
-    questions = buildGameQuestions();
-    currentQuestion = 0;
-    score = 0;
-    selectedOption = null;
-    answers = new Array(questions.length).fill(null);
-    scoreCount.textContent = "0";
-  }
-
-  // ---------- RENDER PATH STRIP ----------
-  function renderPathStrip(activeIndex){
-    pathStrip.innerHTML = "";
-    pathSteps.forEach((step, i) => {
-      const el = document.createElement('span');
-      el.className = i === activeIndex ? 'step-active' : '';
-      el.textContent = step.icon;
-      el.title = step.label;
-      pathStrip.appendChild(el);
-      if(i < pathSteps.length - 1){
-        const arrow = document.createElement('span');
-        arrow.className = 'arrow';
-        arrow.textContent = '→';
-        pathStrip.appendChild(arrow);
-      }
-    });
-  }
-
-  // ---------- RENDER PERGUNTA ----------
-  function renderQuestion(){
-    const q = questions[currentQuestion];
-    selectedOption = answers[currentQuestion];
-
-    questionCounter.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
-    scoreCount.textContent = String(score);
-
-    const progressPercent = ((currentQuestion) / questions.length) * 100 + (100/questions.length)*0.15;
-    progressFill.style.width = Math.min(progressPercent, 100) + "%";
-
-    renderPathStrip(currentQuestion);
-
-    // animação de troca
-    questionCard.style.animation = 'none';
-    void questionCard.offsetWidth;
-    questionCard.style.animation = 'fadeInFast 0.45s ease';
-
-    questionText.textContent = q.text;
-    optionsContainer.innerHTML = "";
-    optionsContainer.classList.remove('answered');
-    feedbackBox.style.display = 'none';
-    feedbackBox.className = 'feedback-box';
-
-    const jaRespondida = selectedOption !== null;
-
-    q.options.forEach((opt, idx) => {
-      const div = document.createElement('div');
-      let classes = 'option';
-      if(jaRespondida){
-        if(idx === q.correct) classes += ' correct';
-        else if(idx === selectedOption) classes += ' incorrect';
-      }
-      div.className = classes;
-      div.innerHTML = `<span class="dot"></span><span>${opt}</span>`;
-      div.addEventListener('click', () => selectOption(idx));
-      optionsContainer.appendChild(div);
-    });
-
-    if(jaRespondida){
-      optionsContainer.classList.add('answered');
-      mostrarFeedback(selectedOption === q.correct, q);
-    }
-
-    updateNextButton();
-  }
-
-  function selectOption(idx){
-    // Trava a resposta assim que o participante escolhe, para mostrar o aviso imediatamente
-    if(selectedOption !== null) return;
-
-    selectedOption = idx;
-    answers[currentQuestion] = idx;
-    recalcScore();
-
-    const q = questions[currentQuestion];
-    document.querySelectorAll('.option').forEach((el, i) => {
-      if(i === q.correct) el.classList.add('correct');
-      if(i === idx && idx !== q.correct) el.classList.add('incorrect');
-    });
-    optionsContainer.classList.add('answered');
-
-    mostrarFeedback(idx === q.correct, q);
-    updateNextButton();
-  }
-
-  function mostrarFeedback(acertou, q){
-    feedbackBox.style.display = 'block';
-    feedbackBox.className = 'feedback-box ' + (acertou ? 'correct' : 'incorrect');
-    // reinicia a animação
-    feedbackBox.style.animation = 'none';
-    void feedbackBox.offsetWidth;
-    feedbackBox.style.animation = '';
-
-    if(acertou){
-      feedbackTitle.textContent = "✅ ACERTOU!";
-    } else {
-      feedbackTitle.textContent = `❌ ERROU! A resposta correta é: "${q.options[q.correct]}"`;
-    }
-    feedbackExplanation.textContent = q.explanation;
-  }
-
-  function updateNextButton(){
-    if(selectedOption !== null){
-      btnNext.classList.add('enabled');
-    } else {
-      btnNext.classList.remove('enabled');
-    }
-  }
-
-  btnNext.addEventListener('click', () => {
-    if(selectedOption === null) return;
-
-    if(currentQuestion < questions.length - 1){
-      currentQuestion++;
-      renderQuestion();
-    } else {
-      finishQuiz();
-    }
-  });
-
-  function recalcScore(){
-    score = 0;
-    answers.forEach((ans, i) => {
-      if(ans !== null && ans === questions[i].correct) score++;
-    });
-    scoreCount.textContent = String(score);
-  }
-
-  // ---------- RESULTADO ----------
-  function finishQuiz(){
-    recalcScore();
-    progressFill.style.width = "100%";
-
-    const total = questions.length;
-    const percent = Math.round((score/total)*100);
-
-    resultHits.textContent = String(score);
-    resultPercent.textContent = String(percent);
-
-    // Regra do prêmio: baseada SOMENTE na pontuação (0-5).
-    // 0, 1 ou 2 acertos -> não ganhou. 3, 4 ou 5 acertos -> ganhou.
-    const won = score >= 3;
-
-    if(won){
-      resultEmoji.textContent = "🍭";
-      resultEmoji.classList.add('win');
-      resultCard.querySelector('.result-title').textContent = "🎉 PARABÉNS! VOCÊ GANHOU O PIRULITO!";
-      resultMessage.className = "result-message win";
-      resultMessage.textContent = "Você aprendeu muito bem o caminho da eletricidade!";
-      resultEstande.style.display = 'block';
-      launchConfetti();
-    } else {
-      resultEmoji.textContent = "📚";
-      resultEmoji.classList.remove('win');
-      resultCard.querySelector('.result-title').textContent = "😕 VOCÊ NÃO GANHOU O PIRULITO";
-      resultMessage.className = "result-message lose";
-      resultMessage.textContent = "Você não atingiu a pontuação mínima para ganhar o pirulito. Tente novamente!";
-      resultEstande.style.display = 'none';
-    }
-
-    showScreen(screenResult);
-  }
-
-  function launchConfetti(){
-    confettiBox.innerHTML = "";
-    const emojis = ["🍭","⚡","🎉","✨","🍬"];
-    for(let i=0; i<24; i++){
-      const span = document.createElement('span');
-      span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      span.style.left = Math.random()*100 + "%";
-      span.style.animationDelay = (Math.random()*0.6) + "s";
-      span.style.fontSize = (14 + Math.random()*14) + "px";
-      confettiBox.appendChild(span);
-    }
-  }
-
-  // ---------- REINICIAR ----------
-  btnRestart.addEventListener('click', () => {
-    resetQuiz();
-    showScreen(screenQuiz);
-    renderQuestion();
-  });
-
-})();
-</script>
-</body>
-</html>
+  .resu
+```
